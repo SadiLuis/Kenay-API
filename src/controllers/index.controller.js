@@ -1,0 +1,25 @@
+import { pool } from '../db.js'; // Assuming you have a db.js file that exports a configured MySQL pool
+
+
+export const getIndex = async (req, res) =>  {  
+    const [result] = await pool.query('SELECT "pong" AS result');  
+    console.log(result);  
+    res.json(result);
+  };
+
+export const createIndex = (req, res) =>
+  res.send('Creation of indexs');
+
+export const idIndex = (req, res) => {
+  const { id } = req.params;
+  res.send(`Indexes with ID: ${id}`);
+}
+
+export const updateIndex = (req, res) => {
+  res.send('Update of Indexes');
+}
+
+export const deleteIndex = (req, res) => {
+  res.send('Deletion of Indexes');
+}
+
