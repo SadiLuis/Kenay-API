@@ -2,30 +2,29 @@ import { pool } from '../db.js'; // Assuming you have a db.js file that exports 
 
 
 export const getEmployees = async (req, res) => {
-    await pool.query('SELECT * FROM kenay_sa.mos_vendedor')
-    .then(([rows]) => {
-      res.json(rows)
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).send('Error listing employees');
-    });
+    try{
+    //throw new Error("My error"); //error para pruebas
+    const [rows] = await pool.query('SELECT * FROM kenay_sa.mos_vendedor');
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error listing employees');
+  }
 };
 
 export const createEmployee = async (req, res) => {
-    await pool.query('INSERT INTO kenay_sa.mos_vendedor SET ?', [req.body])
-    .then(() => {
+    try{      
+      await pool.query('INSERT INTO kenay_sa.mos_vendedor SET ?', [req.body])    
       res.status(201).send('Employee created successfully:' + JSON.stringify(req.body));
-    })
-    .catch(err => {
+    } catch (err) {
       console.error(err);
       res.status(500).send('Error creating employee');
-    });
+    }
 };
 
 export const getEmployee = async (req, res) => {
-  await pool.query('SELECT * FROM kenay_sa.mos_vendedor WHERE Codigo_ven = ?', [req.params.id])  
-  .then(([rows]) => {
+  try{
+  const [rows] = await pool.query('SELECT * FROM kenay_sa.mos_vendedor WHERE Codigo_ven = ?', [req.params.id])  
     if (rows.length <= 0) {
       return res.status(404).send('Employee not found: ' + req.params.id);
     } else if (rows.length > 1) {
@@ -33,27 +32,36 @@ export const getEmployee = async (req, res) => {
     } 
     res.json(rows[0]);
     //  res.json(rows);  manda como objeto, si se quiere como array, usar res.json([rows[0]])    
-  })
-  .catch(err => {
+  } catch (err) {
     console.error(err);
     res.status(500).send('Employee not found');
-  });
+  }
 }
 
 export const deleteEmployee = async (req, res) => {
+    try{
     const [result] = await pool.query('DELETE FROM kenay_sa.mos_vendedor WHERE Codigo_ven = ?', [req.params.id]);
-
     if (result.affectedRows <= 0) return res.status(404).json ({ 
         message: 'Employee not found' 
     });         
     res.sendStatus(204); // 204 OK
     //res.json({ message: 'Employee deleted successfully: ' + req.params.id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error deleting employee');
+  }
 }
 
 export const updateEmployee = async (req, res) => {
+  try{
     //const { Codigo_ven } = req.params;
     //const {   Nombre_ven, Domicilio_ven, Ciudad_ven, Telefono_ven, Celular_ven, comision_ven, Codigo_alta } = req.body;
-    const [result] = await pool.query('UPDATE kenay_sa.mos_vendedor SET ? WHERE Codigo_ven = ?', [req.body, req.params.id]);
+    const [result] = await pool.query('UPDATE kenay_sa.mos_vendedor SET Nombre_ven = IFNULL(?, nombre_ven), Domicilio_ven = IFNULL(?, Domicilio_ven), Ciudad_ven = IFNULL(?, Ciudad_ven), Telefono_ven = IFNULL(?, Telefono_ven), Celular_ven = IFNULL(?, Celular_ven), comision_ven = IFNULL(?, comision_ven), Codigo_alta = IFNULL(?, Codigo_alta) WHERE Codigo_ven = ?', [req.body.Nombre_ven, req.body.Domicilio_ven, req.body.Ciudad_ven, req.body.Telefono_ven, req.body.Celular_ven, req.body.comision_ven, req.body.Codigo_alta, req.params.id]);
     console.log(result);
-    res.json(result);
+    res.json(result); // Return the updated employee data
+    //res.send('Employee updated successfully: ' + JSON.stringify(req.body));
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error updating employee');
+  }
 }
