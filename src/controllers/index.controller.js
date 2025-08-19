@@ -2,7 +2,7 @@ import { pool } from '../db.js'; // Assuming you have a db.js file that exports 
 
 
 export const getIndex = async (req, res) =>  {  
-    const [result] = await pool.query('SELECT "pong" AS result');  
+    const [result] = await pool.query('SELECT "KENAY_SA" AS result');  
     console.log(result);  
     res.json(result);
   };
