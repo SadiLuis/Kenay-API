@@ -1,6 +1,5 @@
 import { pool } from '../db.js'; // Assuming you have a db.js file that exports a configured MySQL pool
 
-
 export const getPresup_detalles = async (req, res) => {
     try{
     //throw new Error("My error"); //error para pruebas
@@ -18,7 +17,7 @@ export const createPresup_detalle = async (req, res) => {
       res.status(201).send('Presup_detalles created successfully:' + JSON.stringify(req.body));
     } catch (err) {
       console.error(err);
-      res.status(500).send('Error creating Presup_detalles');
+      res.status(500).send('Error creating Presup_detalle');
     }
 };
 
