@@ -7,6 +7,7 @@ import {getIndex, createIndex, idIndex, updateIndex, deleteIndex} from '../contr
 
 router.get('/', (req, res) => {
   res.send('KENAY SA - API REST con MySQL y Node.js - BACKEND - 15-08-25');
+  //<a href="https://macaw-striking-violently.ngrok-free.app/api/woo_rubros">Woo_rubros</a>
 });
 
 // Define routes for indexes
