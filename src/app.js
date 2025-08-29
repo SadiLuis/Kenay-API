@@ -18,9 +18,17 @@ import art_imagen from './routes/art_imagen.routes.js'; // Assuming you have a c
 import combo_art from './routes/combo_art.routes.js'; // Assuming you have a controller for Combo_art
 import art_detalle from './routes/art_detalle.router.js'; // Assuming you have a controller for Art_detalle
 import ala_usuarios from './routes/ala.usuarios.routes.js'; // Assuming you have a controller for Ala_usuarios
+import tbl_marcas from './routes/tbl_marcas.routes.js'; // Assuming you have a controller for Tbl_marcas
+import tbl_matamarcas from './routes/tbl_matamarcas.routes.js'; // Assuming you have a controller for Tbl_matamarcas
+import tbl_matatipos from './routes/tbl_matatipos.routes.js'; // Assuming you have a controller for Tbl_matatipos
+import tbl_provee from './routes/tbl_provee.routes.js'; // Assuming you have a controller for Tbl_provee
+import tbl_proveedorjuris from './routes/tbl_proveedorjuris.routes.js'; // Assuming you have a controller for Tbl_proveedorjuris
+import tbl_provincias from './routes/tbl_provincias.routes.js'; // Assuming you have a controller for Tbl_provincias
+import tbl_colores from './routes/tbl_colores.routes.js';
+import pedido_detalle from './routes/pedido_detalle.routes.js'
+
 
 const app = express();
-
 app.use(express.json()); // Middleware to parse JSON bodies
 
 //SI O SI PARA Q ANDEN LAS VISTAS
@@ -48,6 +56,15 @@ app.use('/api', art_imagen); // Use the art_imagen routes under the /api path
 app.use('/api', combo_art); // Use the combo_art routes under the /api path
 app.use('/api', art_detalle); // Use the art_detalle routes under the /api path
 app.use('/api', ala_usuarios); // Use the ala_usuarios routes under the /api path
+app.use('/api', tbl_marcas); // Use the tbl_marcas routes under the /api path
+app.use('/api', tbl_matamarcas); // Use the tbl_matamarcas routes under the /api path
+app.use('/api', tbl_matatipos); // Use the tbl_matatipos routes under the /api path
+app.use('/api', tbl_provee); // Use the tbl_provee routes under the /api path
+app.use('/api', tbl_proveedorjuris); // Use the tbl_proveedorjuris routes under the /api path
+app.use('/api', tbl_provincias); // Use the tbl_provincias routes under the /api path
+app.use('/api', tbl_colores);
+app.use('/api', pedido_detalle);
+
 
 
 app.use((req, res, next) => {
