@@ -12,10 +12,21 @@ import woo_rubrosRoutes from './routes/woo_rubros.routes.js'; // Assuming you ha
 import presup_detalleRoutes from './routes/presup_detalle.routes.js';
 import art_talle_medida from './routes/art_talle_medida.routes.js'; // Assuming you have a controller for Art_talle_medida
 import pedido_todos from './routes/pedido_todos.routes.js'; // Assuming you have a controller for Pedido_todos
+import art_descuentos from './routes/art_descuentos.routes.js'; // Assuming you have a controller for Art_descuentos
+import art_descuentos_cant from './routes/art_descuentos_cant.routes.js'; // Assuming you have a controller for Art_descuentos_cant
+import art_imagen from './routes/art_imagen.routes.js'; // Assuming you have a controller for Art_imagen
+import combo_art from './routes/combo_art.routes.js'; // Assuming you have a controller for Combo_art
+import art_detalle from './routes/art_detalle.router.js'; // Assuming you have a controller for Art_detalle
+import ala_usuarios from './routes/ala.usuarios.routes.js'; // Assuming you have a controller for Ala_usuarios
 
 const app = express();
 
 app.use(express.json()); // Middleware to parse JSON bodies
+
+//SI O SI PARA Q ANDEN LAS VISTAS
+app.set('view engine', 'ejs'); // Set EJS as the templating engine
+app.set('views', './src/views'); // Set the directory for EJS templates
+
 
 app.use(indexRoutes)
 app.use('/api', indexRoutes); // Use the index routes under the /api path
@@ -31,6 +42,12 @@ app.use('/api', woo_rubrosRoutes);
 app.use('/api', presup_detalleRoutes); 
 app.use('/api', art_talle_medida); // Use the art_talle_medida routes under the /api path
 app.use('/api', pedido_todos); // Use the pedido_todos routes under the /api path
+app.use('/api', art_descuentos); // Use the art_descuentos routes under the /api path
+app.use('/api', art_descuentos_cant); // Use the art_descuentos_cant routes under the /api path
+app.use('/api', art_imagen); // Use the art_imagen routes under the /api path
+app.use('/api', combo_art); // Use the combo_art routes under the /api path
+app.use('/api', art_detalle); // Use the art_detalle routes under the /api path
+app.use('/api', ala_usuarios); // Use the ala_usuarios routes under the /api path
 
 
 app.use((req, res, next) => {

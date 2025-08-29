@@ -4,7 +4,7 @@ import { pool } from '../db.js'; // Assuming you have a db.js file that exports 
 export const getArt_depositos = async (req, res) => {
     try{
     //throw new Error("My error"); //error para pruebas
-    const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito');
+    const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito limit 500');
     res.json(rows);
   } catch (err) {
     console.error(err);
