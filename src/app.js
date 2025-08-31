@@ -26,8 +26,11 @@ import tbl_proveedorjuris from './routes/tbl_proveedorjuris.routes.js'; // Assum
 import tbl_provincias from './routes/tbl_provincias.routes.js'; // Assuming you have a controller for Tbl_provincias
 import tbl_colores from './routes/tbl_colores.routes.js';
 import pedido_detalle from './routes/pedido_detalle.routes.js'
+import back_usersRoutes from './routes/auth.routes.js'; // Assuming you have a controller for Back_user
+import auth_Routes from "./routes/auth.routes.js"
+import {authenticateToken} from "./controllers/auth.controller.js"
 
-
+import cookieParser from 'cookie-parser';
 const app = express();
 app.use(express.json()); // Middleware to parse JSON bodies
 
@@ -35,37 +38,42 @@ app.use(express.json()); // Middleware to parse JSON bodies
 app.set('view engine', 'ejs'); // Set EJS as the templating engine
 app.set('views', './src/views'); // Set the directory for EJS templates
 
+app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded bodies
+app.use(express.json()); // Middleware to parse JSON bodies
+
+app.use(cookieParser()); // Middleware to parse cookies
+
 
 app.use(indexRoutes)
-app.use('/api', indexRoutes); // Use the index routes under the /api path
-app.use('/api', mos_vendedoRoutes);
-app.use('/api', tbl_clientesRoutes);
-app.use('/api', tbl_lista_preciosRoutes);
-app.use('/api', tbl_personalRoutes);
-app.use('/api', presup_todosRoutes); 
-app.use('/api', art_depositoRoutes);
-app.use('/api', art_rubroRoutes);
-app.use('/api', art_subrubroRoutes); 
-app.use('/api', woo_rubrosRoutes);
-app.use('/api', presup_detalleRoutes); 
-app.use('/api', art_talle_medida); // Use the art_talle_medida routes under the /api path
-app.use('/api', pedido_todos); // Use the pedido_todos routes under the /api path
-app.use('/api', art_descuentos); // Use the art_descuentos routes under the /api path
-app.use('/api', art_descuentos_cant); // Use the art_descuentos_cant routes under the /api path
-app.use('/api', art_imagen); // Use the art_imagen routes under the /api path
-app.use('/api', combo_art); // Use the combo_art routes under the /api path
-app.use('/api', art_detalle); // Use the art_detalle routes under the /api path
-app.use('/api', ala_usuarios); // Use the ala_usuarios routes under the /api path
-app.use('/api', tbl_marcas); // Use the tbl_marcas routes under the /api path
-app.use('/api', tbl_matamarcas); // Use the tbl_matamarcas routes under the /api path
-app.use('/api', tbl_matatipos); // Use the tbl_matatipos routes under the /api path
-app.use('/api', tbl_provee); // Use the tbl_provee routes under the /api path
-app.use('/api', tbl_proveedorjuris); // Use the tbl_proveedorjuris routes under the /api path
-app.use('/api', tbl_provincias); // Use the tbl_provincias routes under the /api path
-app.use('/api', tbl_colores);
-app.use('/api', pedido_detalle);
-
-
+app.use('/api',  indexRoutes); // Use the index routes under the /api path
+app.use('/api',  mos_vendedoRoutes);
+app.use('/api',  tbl_clientesRoutes);
+app.use('/api',  tbl_lista_preciosRoutes);
+app.use('/api',  tbl_personalRoutes);
+app.use('/api',  presup_todosRoutes); 
+app.use('/api',  art_depositoRoutes);
+app.use('/api',  art_rubroRoutes);
+app.use('/api',  art_subrubroRoutes); 
+app.use('/api',  woo_rubrosRoutes);
+app.use('/api',  presup_detalleRoutes); 
+app.use('/api',  art_talle_medida); // Use the art_talle_medida routes under the /api path
+app.use('/api',  pedido_todos); // Use the pedido_todos routes under the /api path
+app.use('/api',  art_descuentos); // Use the art_descuentos routes under the /api path
+app.use('/api',  art_descuentos_cant); // Use the art_descuentos_cant routes under the /api path
+app.use('/api',  art_imagen); // Use the art_imagen routes under the /api path
+app.use('/api',  combo_art); // Use the combo_art routes under the /api path
+app.use('/api',  art_detalle); // Use the art_detalle routes under the /api path
+app.use('/api',  ala_usuarios); // Use the ala_usuarios routes under the /api path
+app.use('/api',  tbl_marcas); // Use the tbl_marcas routes under the /api path
+app.use('/api',  tbl_matamarcas); // Use the tbl_matamarcas routes under the /api path
+app.use('/api',  tbl_matatipos); // Use the tbl_matatipos routes under the /api path
+app.use('/api',  tbl_provee); // Use the tbl_provee routes under the /api path
+app.use('/api',  tbl_proveedorjuris); // Use the tbl_proveedorjuris routes under the /api path
+app.use('/api',  tbl_provincias); // Use the tbl_provincias routes under the /api path
+app.use('/api',  tbl_colores);
+app.use('/api',  pedido_detalle);
+app.use('/api',  back_usersRoutes);
+app.use('/api',  auth_Routes);
 
 app.use((req, res, next) => {
   res.status(404).send('<h3 style="color: black;text-align:center;">EndPoint Not Found / Ruta o Dirección no Encontrada</h3>'); //si no se encuentra la ruta

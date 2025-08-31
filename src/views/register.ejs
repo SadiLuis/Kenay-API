@@ -1,47 +1,132 @@
-<!doctype html>
+<script>
+  function ShowName() {
+    var writtenName = document.getElementById("name").value;
+    document.getElementById("name").value = formatToString(writtenName);
+  }
+  function ShowUser() {
+    var writtenName = document.getElementById("user").value;
+    document.getElementById("user").value = formatToString(writtenName);
+  }
+
+  function formatToString(writtenName) {
+    var tmp = writtenName.split(" ");
+    var fullName;
+    tmp.forEach((element) => {
+      if (fullName) {
+        fullName =
+          fullName +
+          " " +
+          element.charAt(0).toUpperCase() +
+          element.slice(1).toLocaleLowerCase();
+      } else {
+        fullName =
+          element.charAt(0).toUpperCase() +
+          element.slice(1).toLocaleLowerCase();
+      }
+    });
+    return fullName;
+  }
+
+  function mostrarContrasena() {
+    var tipo = document.getElementById("pass");
+    var eye = document.getElementById("eyepassword");
+    if (tipo.type == "password") {
+      tipo.type = "text";
+      eye.class = "btn btn-secondary";
+    } else {
+      tipo.type = "password";
+      eye.class = "btn btn-primary";
+    }
+  }
+</script>
+
+<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Node Authentication</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
+    />
     <style>
-        body         { padding-top:80px; }
+      body {
+        padding-top: 80px;
+      }
     </style>
-</head>
-<body>
-<div class="container">
-<div class="col-sm-6 col-sm-offset-3">
+  </head>
+  <body>
+    <div class="container">
+      <div class="col-sm-6 col-sm-offset-3">
+        <h1><span class="fa fa-sign-in"></span> Signup</h1>            
 
-    <h1><span class="fa fa-sign-in"></span> Signup</h1>    
-
-    <!-- LOGIN FORM -->
-    <form action="/signup" method="post">
-        <div class="form-group">
-            <label>Email</label>
-            <input type="text" class="form-control" name="email">
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" class="form-control" name="password">
-        </div>
-        <div class="form-group">
+        <!-- LOGIN FORM -->
+        <form action="/api/register" method="POST">
+          <div class="form-group">
+            <label>Nombre Completo</label>
+            <input
+              onkeyup="ShowName()"
+              type="text"
+              class="form-control"
+              name="name"
+              id="name"
+              autofocus
+            />
+          </div>
+          <div class="form-group">
+            <label>Cuenta de Usuario</label>
+            <input
+              onkeyup="ShowUser()"
+              type="text"
+              class="form-control"
+              name="user"
+              id="user"
+            />
+          </div>
+          <div class="form-group">
+            <label>Contraseña/Password</label>
+            <input type="password" class="form-control" name="pass" id="pass" />
+          </div>
+          <!-- <div class="form-group">
             <label>Repeat Password</label>
             <input type="password" class="form-control" name="password">
+        </div> -->
+          <p></p>
+          <div class="input-group-append">
+            <button
+              id="eyepassword"
+              class="btn btn-secondary"
+              name="eyepassword"
+              type="button"
+              onclick="mostrarContrasena()"
+            >
+              <span class="fa fa-eye-slash icon"></span>
+            </button>
+          </div>
+          <p></p>          
+          <button type="submit" class="btn btn-warning btn-lg">Register</button>
+          <a href="/raiz" class="btn btn-danger btn-lg">Cancel</a>
+        </form>
+
+        <hr />
+
+        <p>Account? <a href="/login">Login</a></p>
+        <p>Or go <a href="/api/raiz">Api´s</a>.</p>
+
+        <div class="text-center">
+          <p>
+            Kenay.SA - El Galpón Corrientes
+            <a href="http://localhost:5600/api/">API</a>.
+          </p>
+          <p>
+            Visit the
+            <a href="https://www.linkedin.com/company/rd-it/about/">RD-IT</a>.
+          </p>
         </div>
-
-        <button type="submit" class="btn btn-warning btn-lg">Signup</button>
-    </form>
-
-    <hr>
-
-    <p>Account? <a href="/login">Login</a></p>
-    <p>Or go <a href="/api/raiz">Api´s</a>.</p>
-
-    <div class="text-center">
-        <p>Kenay.SA - El Galpón Corrientes <a href="http://localhost:5600/api/">API</a>.</p>
-        <p>Visit the <a href="https://www.linkedin.com/company/rd-it/about/">RD-IT</a>.</p>
+      </div>
     </div>
-</div>
-</div>
-</body>
+  </body>
 </html>
