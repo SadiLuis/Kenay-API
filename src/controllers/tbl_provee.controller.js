@@ -2,13 +2,22 @@ import { pool } from '../db.js'; // Assuming you have a db.js file that exports 
 
 
 export const getTbl_provees = async (req, res) => {
-    try{
+  try {
     //throw new Error("My error"); //error para pruebas
-    const [rows] = await pool.query('SELECT * FROM kenay_sa.Tbl_provee');
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    // 2. Renderiza la vista 'profile' y pasa los datos de la cookie    
+    console.log("cookiedata de woo_rubros", cookieData)
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.Tbl_provee');
     res.json(rows);
+    }
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error listing Tbl_provees');
+    res.status(401).send('Index.ejs - acceso no Autorizado sin Token')
+    //res.status(500).send('Error listing Woo_rubross');
   }
 };
 

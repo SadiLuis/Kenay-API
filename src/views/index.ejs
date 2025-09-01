@@ -1,4 +1,30 @@
 <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title><%= pageTitle %></title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .user-info { border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <!-- <h1><%= pageTitle %></h1> -->
+
+  <% if (userData) { %>
+    <div class="user-info">
+      <h2>Información del Usuario</h2>
+      <p style="color:red"><strong>User:</strong> <%= userData.user %></p>
+      <!-- <p><strong>Token:</strong> <%= userData.token %></p> -->
+      LOG-OUT  ----> <a href="logout">*** LOG-OUT ****</a>.
+    </div>
+  <% } else { %>
+    <p>No se encontraron datos del usuario en las cookies.</p>
+  <% } %>
+  
+</body>
+</html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>Kenay.SA</title>
@@ -25,25 +51,29 @@
         <form action="/index" method="post">
           <div class="form-group">
             <p>
-              <a href="art_depositos" target="_blank">art_deposito</a>.art_deposito limit 500 **
+              <a href="art_depositos" target="_blank">art_deposito</a>.art_rubro
             </p>
             <p>
               <a href="art_rubros" target="_blank">art_rubro</a>.art_subrubro
             </p>
             <p>
               <a href="art_subrubros" target="_blank">art_subrubro</a
-              >.art_talle_medida
+              >.aart_subrubro
             </p>
             <p>
               <a href="art_talle_medidas" target="_blank">art_talle_medida</a
-              >.pedido_todos
+              >.art_talle_medida
             </p>
             <p>
               <a href="pedido_todos" target="_blank">pedido_todos</a
-              >.presup_detalle
+              >.pedido todos
             </p>
             <p>
               <a href="presup_detalles" target="_blank">presup_detalle</a
+              >.presup_detalle
+            </p>
+            <p>
+              <a href="presup_todos" target="_blank">presup_todos</a
               >.presup_todos
             </p>
             <p>
@@ -86,50 +116,21 @@
               >.ala_usuarios
             </p>
             <p>
-              <a href="tbl_marcass" target="_blank">tbl_marcas</a
-              >.tbl_marcas
+              <a href="back_users" target="_blank">back_user</a
+              >.back_user
             </p>
-            <p>
-              <a href="tbl_matamarcass" target="_blank">tbl_matamarcas</a
-              >.tbl_marcas
-            </p>
-            <p>
-              <a href="tbl_matatiposs" target="_blank">tbl_matatipos</a
-              >.tbl_matatipos
-            </p>
-            <p>
-              <a href="tbl_provees" target="_blank">tbl_provee</a
-              >.tbl_provee
-            </p>
-            <p>
-              <a href="tbl_proveedorjuriss" target="_blank">tbl_proveedorjuris</a
-              >.tbl_proveedorjuris
-            </p>
-            <p>
-              <a href="tbl_provinciass" target="_blank">tbl_provincias</a
-              >.tbl_provincias
-            </p>            
-            <p>
-              <a href="tbl_coloress" target="_blank">tbl_colores</a
-              >.tbl_colores
-            </p>
-            <p>
-              <a href="pedido_detalles" target="_blank">pedido_detalle</a
-              >.pedido_detalle limit 500 **
-            </p>
-            
           </div>
         </form>
 
         <hr />
-
-        <!-- <p>Need an account? <a href="/register">Signup</a></p>
-        <p>Or go <a href="/api/login">Login</a>.</p> -->
+<!-- 
+        <p>Need an account? <a href="/register">Signup</a></p>
+        <p>Or go <a href="/api/index">home</a>.</p> -->
 
         <div class="text-center">
           <p>
             Kenay.SA - El Galpón Corrientes
-            <a href="/api/logout" style="color:red">LOG-OUT</a>
+            <!-- <a href="/api/logout" style="color:red">LOG-OUT</a>. -->
           </p>
           <p>
             Visit the

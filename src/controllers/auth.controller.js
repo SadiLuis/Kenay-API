@@ -19,25 +19,37 @@ app.use(express.json());
 export const getback_users = async (req, res) => {
     try {
         //throw new Error("My error"); //error para pruebas
-        const [rows] = await pool.query('SELECT * FROM kenay_sa.back_user');
-        res.json(rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error listing back_user');
+        const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+        // 2. Renderiza la vista 'profile' y pasa los datos de la cookie    
+        console.log("cookiedata de woo_rubros", cookieData)
+        const token = cookieData.token;
+        if (!token) {
+            return res.status(403).send('Acceso no Autorizado, no llega token')
+        } else {
+            //throw new Error("My error"); //error para pruebas
+            const [rows] = await pool.query('SELECT * FROM kenay_sa.back_user');
+            res.json(rows);
+        }
     }
-};
+    catch (err) {
+        console.error(err);
+        res.status(401).send('Index.ejs - acceso no Autorizado sin Token')
+    }
+}
+
 
 //log out
 export const logoutback_user = async (req, res) => {
-    try {
-        res.clearCookie('jtw')
-        return res.redirect('/api/login')
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Error log out_user');
-    }
+    // try {
+    //     res.clearCookie('jtw')
+    //     return res.redirect('/api/login')
+    // } catch (err) {
+    //     console.error(err);
+    //     res.status(500).send('Error log out_user');
+    // }
+    res.cookie('user_data', '', { expires: new Date(0), httpOnly: true });
+    res.status(200).send({ message: 'Logout exitoso' });
 };
-
 
 export const createBack_user = async (req, res) => {
     const { name, user, pass } = req.body;
@@ -77,28 +89,46 @@ export const loginback_user = async (req, res) => {
         if (!user || !pass) {
             return res.status(400).json({ message: "Username and password are required" });
         } else {
-            const [result] = await pool.query('SELECT * FROM kenay_sa.back_user WHERE back_user = ?', [user]);
-
-            if ((await bcrypt.compare(pass, result[0].back_userpass))) {
-                // ... después de verificar la contraseña
-                const payload = { idback_user: user };
-                const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
-                console.log(user, pass);
-                console.log("login ok");
-                console.log("TOKEN", token)
-                //res.redirect('/api/raiz')
-                //para mostrar en cabezera el token
-                //res.statos(200).json(user, pass, token)
-                //let nDatos = {user, pass, token}
-                res.json(token);                   
-                //res.render("/api/back_users", token)                       
-                //res.status(200).json({ message: "Login successful" });
-
+            const [result] = await pool.query('SELECT * FROM kenay_sa.back_user WHERE back_user = ?', user);
+            //console.log("RESULT",result)
+            if (result <= 0 || result == []) {
+                res.redirect('/api/login')
+                console.log('contraseña incorrecta o usuario', result)
             } else {
-            console.log("Datos incorrectos Usuario o Contraseña")
-            res.redirect("/login")
+                if ((await bcrypt.compare(pass, result[0].back_userpass))) {
+                    //const user = result[0].back_user
+                    // ... después de verificar la contraseña
+                    const payload = { user };
+                    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+                    console.log(user, pass);
+                    console.log("login ok");
+                    console.log("TOKEN", token)
+                    res.cookie('user_data', JSON.stringify({ user, token }), { httpOnly: true, maxAge: 3600000 });
+                    // res
+                    //     .cookie('access_token', token, {
+                    //         httpOnly: true, //solo accede desde el servidor                        
+                    //         maxAge: 1000 * 60 * 60,
+                    //     })
+                    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+                    res.render('index.ejs', {
+                        pageTitle: 'Página de Inicio',
+                        userData: cookieData // Envía los datos de la cookie a la vista
+                    });
+                    //.send({user, token})
+                    //.render("/api/raiz", user, token)
+                    //res.status(200).json({ message: "Login successful" } , token); 
+                    // const cookiesOptions = {
+                    //     expires: new Date(Date.now()+process.env.JWT_COOKIE_EXPIRES *24 * 60 *60 *1000),
+                    //     
+                    // }
+                    // res.cookie(jwt, token, cookiesOptions) 
 
-        }}
+                } else {
+                    console.log("Datos incorrectos Usuario o Contraseña")
+                    res.redirect("/login")
+                }
+            }
+        };
     } catch (err) {
         console.error("Login function error:", err);
         // Send a generic error response to the client
@@ -107,20 +137,35 @@ export const loginback_user = async (req, res) => {
 };
 
 // Middleware
-export function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    token = authHeader && authHeader.split(' ')[1];
-    console.log(authHeader);
-
-    if (token == null)
-        return res.status(401).send("token requerido");
-
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403);
-        console.log(user)
+export const authenticateToken = async (req, res, next) => {
+    const token = req.cookies.access_token
+    if (!token) {
+        return res.status(403).send('Acceso no Autorizado')
+    }
+    try {
+        jwt.verify(token, process.env.JWT_SECRET)
         req.user = user;
         next();
-    })
+    } catch {
+        res.status(401).send('acceso no Autorizado sin')
+    }
+    // Obtener el encabezado de autorización
+    // const authHeader = req.headers['authorization'];
+    // // Extraer el token (formato: "Bearer TOKEN")
+    // //const token = authHeader && authHeader.split(' ')[1];
+    // console.log("authHeader", authHeader);
+    // const token = req.cookies.access_token
+    // console.log ('token con cookie', token)
+    // if (!token) {
+    //     return res.status(403).send('Acceso no Autorizado') 
+    // } else {
+    //     const data = jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    //         if (err) return res.sendStatus(403);
+    //         console.log("Token", data)
+    //         req.user = user;
+    //         next();
+    //     })
+    // }
 }
 
 export const deleteBack_user = async (req, res) => {

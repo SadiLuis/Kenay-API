@@ -3,6 +3,7 @@ import {Router} from "express";
 const router = Router();
 
 import {getIndexRegister, getIndexLogin, getIndexraiz, getIndex, createIndex, idIndex, updateIndex, deleteIndex} from '../controllers/index.controller.js';
+//import { authenticateToken } from "../controllers/auth.controller.js";
 
 // defino la ruta de login y vistas
 router.get('/raiz', getIndexraiz); // Route to render the index page
