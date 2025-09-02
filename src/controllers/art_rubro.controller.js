@@ -16,7 +16,7 @@ export const getArt_rubros = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(401).send('Index.ejs - acceso no Autorizado sin Token')
+    res.status(401).send('art_rubro - acceso no Autorizado sin Token')
     //res.status(500).send('Error listing Woo_rubross');
   }
 };

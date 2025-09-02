@@ -1,13 +1,22 @@
 import { pool } from '../db.js'; // Assuming you have a db.js file that exports a configured MySQL pool
 
 export const getPedido_todos = async (req, res) => {
-    try{
+  try {
     //throw new Error("My error"); //error para pruebas
-    const [rows] = await pool.query('SELECT * FROM kenay_sa.pedido_todos');
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    // 2. Renderiza la vista 'profile' y pasa los datos de la cookie    
+    console.log("cookiedata de pedido_todos", cookieData)
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.pedido_todos');
     res.json(rows);
+    }
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error listing Pedido_todo');
+    res.status(401).send('pedido_todos - acceso no Autorizado sin Token')
+    //res.status(500).send('Error listing Woo_rubross');
   }
 };
 

@@ -16,7 +16,7 @@ export const getArt_imagens = async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(401).send('Index.ejs - acceso no Autorizado sin Token')
+    res.status(401).send('Art_imagen - acceso no Autorizado sin Token')
     //res.status(500).send('Error listing Woo_rubross');
   }
 };
