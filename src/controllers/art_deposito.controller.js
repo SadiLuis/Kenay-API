@@ -11,8 +11,10 @@ export const getArt_depositos = async (req, res) => {
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token')
     } else {
-      const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito limit 500');
-    res.json(rows);
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito WHERE Descripcion_art NOT LIKE "%BAJA%" limit 500');
+      //SELECT * FROM kenay_sa.art_deposito where Descripcion_art LIKE '%baja%' limit 20; //FILTRA POR LOS Q EN DESCRIPCION DICE BAJA EN ALGUN LADO
+      //const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito limit 500');
+      res.json(rows);
     }
   } catch (err) {
     console.error(err);
@@ -20,6 +22,94 @@ export const getArt_depositos = async (req, res) => {
     //res.status(500).send('Error listing Woo_rubross');
   }
 };
+
+export const getPaginatedAndFilteredData = (tableName, filterClause) => {
+  return async (req, res) => {
+    try {
+      // 1. Validar el token de la cookie
+      const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+      if (!cookieData || !cookieData.token) {
+        console.log("Acceso no Autorizado, no llega token en la cookie");
+        return res.status(401).send('Acceso no Autorizado. Por favor, inicie sesión.');
+      }
+
+      // 2. Obtener los parámetros de paginación de la URL
+      const page = parseInt(req.query.page) || 1; // Página actual, por defecto 1
+      const limit = parseInt(req.query.limit) || 200; // Límite de registros, por defecto 20
+      const offset = (page - 1) * limit; // Calcula el OFFSET
+
+      // 3. Obtener el total de registros para los metadatos de la paginación
+      const [totalRows] = await pool.query(`SELECT COUNT(*) as count FROM kenay_sa.${tableName} ${filterClause}`);
+      const totalCount = totalRows[0].count;
+
+      // 4. Construir y ejecutar la consulta con LIMIT y OFFSET
+      const query = `SELECT * FROM kenay_sa.${tableName} ${filterClause} LIMIT ? OFFSET ?`;
+      const [rows] = await pool.query(query, [limit, offset]);
+
+      // 5. Enviar la respuesta con los metadatos de paginación
+      res.json({
+        total: totalCount,
+        page: page,
+        limit: limit,
+        data: rows,
+      });
+
+    } catch (err) {
+      console.error(`Error al obtener datos paginados de ${tableName}:`, err);
+      res.status(500).send('Error interno del servidor. No se pudieron obtener los datos.');
+    }
+  };
+};
+
+
+export const getArt_depositos_cursor = async (req, res) => {
+  try {
+    // 1. Token validation (same as before)
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    if (!cookieData || !cookieData.token) {
+      console.log("Acceso no Autorizado, no llega token en la cookie");
+      return res.status(401).send('Acceso no Autorizado. Por favor, inicie sesión.');
+    }
+
+    // 2. Get pagination parameters from the URL
+    const lastId = req.query.lastId ? parseInt(req.query.lastId) : 0; // The cursor
+    const limit = parseInt(req.query.limit) || 50; // Items per page, default 50
+
+    // 3. Build the query using the cursor (lastId)
+    let query = `
+      SELECT * FROM kenay_sa.art_deposito
+      WHERE Descripcion_art NOT LIKE "%BAJA%"
+    `;
+    let queryParams = [];
+
+    // Add the cursor condition if lastId is provided
+    if (lastId > 0) {
+      query += ` AND Codigo_art > ?`; // Assuming 'ID' is your unique indexed column
+      queryParams.push(lastId);
+    }
+    
+    // Add ORDER BY and LIMIT
+    query += ` ORDER BY Codigo_art ASC LIMIT ?`;
+    queryParams.push(limit);
+
+    // 4. Execute the query
+    const [rows] = await pool.query(query, queryParams);
+
+    // 5. Send the response with data and the next cursor
+    const nextCursor = rows.length > 0 ? rows[rows.length - 1].ID : null;
+
+    res.json({
+      data: rows,
+      nextCursor: nextCursor,
+      hasMore: rows.length === limit,
+    });
+
+  } catch (err) {
+    console.error("Error fetching art_depositos with cursor:", err);
+    res.status(500).send('Error interno del servidor. No se pudieron obtener los datos.');
+  }
+};
+
 
 
 export const getArt_deposito = async (req, res) => {

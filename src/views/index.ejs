@@ -1,33 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title><%= pageTitle %></title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .user-info { border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
-  </style>
-</head>
-<body>
-  <!-- <h1><%= pageTitle %></h1> -->
-
-  <% if (userData) { %>
-    <div class="user-info">
-      <h2>Información del Usuario</h2>
-      <p style="color:red"><strong>User:</strong> <%= userData.user %></p>
-      <!-- <p><strong>Token:</strong> <%= userData.token %></p> -->
-      LOG-OUT  ----> <a href="logout">*** LOG-OUT ****</a>.
-    </div>
-  <% } else { %>
-    <p>No se encontraron datos del usuario en las cookies.</p>
-  <% } %>
-  
-</body>
-</html>
-<!DOCTYPE html>
 <html>
   <head>
     <title>Kenay.SA</title>
+    
     <link
       rel="stylesheet"
       href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
@@ -45,16 +20,38 @@
   <body>
     <div class="container">
       <div class="col-sm-6 col-sm-offset-3">
-        <h1><span class="fa fa-sign-in"></span> A P I S</h1>
-
+        <h1><span class="fa fa-sign-in"></span> A P I S</h1> 
+<div class="user-info">       
+      LOG-OUT  ----> <a href="logout" style="text-shadow: 2px 2px 4px #888; font-weight: bold; color:red">*** LOG-OUT ****</a>.
+      <P></P>
+      <p style="color:red"> </p>  
+    </div>
         <!-- LOGIN FORM -->
         <form action="/index" method="post">
           <div class="form-group">
             <p>
-              <a href="art_depositos" target="_blank">art_deposito</a>.art_rubro
+              <a href="art_depositos" target="_blank">art_deposito</a>.art_deposito limit 500
             </p>
             <p>
-              <a href="art_rubros" target="_blank">art_rubro</a>.art_subrubro
+              <a href="art_depositos_paginate" target="_blank">art_deposito_paginate</a>.art_deposito metodo Paginate
+            </p>
+            <p>
+              <a href="art_depositos_cursor" target="_blank">/api/art_depositos_cursor</a>.art_deposito metodo paginate cursor
+              <p></p> 
+              <H5 style="color:red">Como llamar por si no sabes o por las dudas.Ejemplos: -> paginate metodo cursor</h5>
+                 
+              <a href="art_depositos_cursor?limit=100" target="_blank">/api/art_depositos_cursor?limit=100</a>
+              <!-- .art_deposito metodo Paginate Cursor limit=100               -->
+               <p></p>
+              
+              <a href="art_depositos_cursor?limit=100&cursor=ID_of_last_item_from_first_page" target="_blank">./api/art_depositos_cursor?limit=100&cursor=ID_of_last_item_from_first_page</a>
+                <!-- ./api/art_depositos_cursor?limit=100&cursor=ID_of_last_item_from_first_page -->
+              
+              <p>-</p>
+            </p>
+
+            <p>
+              <a href="art_rubros" target="_blank">art_rubro</a>.art_rubro
             </p>
             <p>
               <a href="art_subrubros" target="_blank">art_subrubro</a
@@ -130,7 +127,9 @@
         <div class="text-center">
           <p>
             Kenay.SA - El Galpón Corrientes
-            <!-- <a href="/api/logout" style="color:red">LOG-OUT</a>. -->
+            </p>
+            <p></p>
+            <a href="/api/REGISTER" style="color:red">REGISTER NEW USER</a>.
           </p>
           <p>
             Visit the
