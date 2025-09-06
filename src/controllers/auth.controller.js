@@ -19,7 +19,7 @@ export const getback_users = async (req, res) => {
         //throw new Error("My error"); //error para pruebas
         const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
         // 2. Renderiza la vista 'profile' y pasa los datos de la cookie    
-        console.log("cookiedata de woo_rubros", cookieData)
+        // console.log("cookiedata de woo_rubros", cookieData)
         const token = cookieData.token;
         if (!token) {
             return res.status(403).send('Acceso no Autorizado, no llega token')
@@ -30,7 +30,7 @@ export const getback_users = async (req, res) => {
         }
     }
     catch (err) {
-        console.error(err);
+        // console.error(err);
         res.status(401).send('Index.ejs - acceso no Autorizado sin Token')
     }
 }
@@ -55,33 +55,33 @@ export const createBack_user = async (req, res) => {
         //throw new Error("My error"); //error para pruebas
         const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
         // 2. Renderiza la vista 'profile' y pasa los datos de la cookie    
-        console.log("cookiedata de woo_rubros", cookieData)
+        // console.log("cookiedata de woo_rubros", cookieData)
         const token = cookieData.token;
         if (!token) {
             return res.status(403).send('Acceso no Autorizado, no llega token')
         } else {
-            console.log(req.body);
+            // console.log(req.body);
             //verifico si el usuario ya existe
             const [rows] = await pool.query('SELECT * FROM kenay_sa.back_user WHERE back_user = ?', [user]);
             if (rows.length <= 0) {
                 var passwordHash = await bcrypt.hash(pass, 8); //hash de la contraseña
-                console.log(passwordHash);
+                // console.log(passwordHash);
                 await pool.query('INSERT INTO kenay_sa.back_user SET ?', { back_user: user, back_username: name, back_userpass: passwordHash })
-                console.log('usuario no encontrado y Creado Nuevo');
+                // console.log('usuario no encontrado y Creado Nuevo');
                 //res.status(201).send('Creado User Nuevo' + JSON.stringify(req.body));
                 res.redirect('/api/login');
             } 
             if (rows.length >= 0) {
-                console.log(user, name, pass);
-                console.log(rows);
+                // console.log(user, name, pass);
+                // console.log(rows);
                 //res.status(201).send('Error Creando Usuario porque ya existe en la tabla' + JSON.stringify(req.body));            
-                console.log('Error creando Back_user: el usuario ya existe');
+                // console.log('Error creando Back_user: el usuario ya existe');
                 res.redirect('/api/register');              
 
             }}} catch (err) {
-                console.error(err);
-                console.log("Error creando Back_user", { user, name, pass });
-                console.error(err);
+                // console.error(err);
+                // console.log("Error creando Back_user", { user, name, pass });
+                // console.error(err);
                 res.status(401).send('REGISTRO CANCELADO - Acceso no Autorizado sin Token o permisos')
                 // res.render('index')
                 // res.status(500).send('Error creating Back_user');
@@ -108,9 +108,9 @@ export const createBack_user = async (req, res) => {
                             // ... después de verificar la contraseña
                             const payload = { user };
                             const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
-                            console.log(user, pass);
-                            console.log("login ok");
-                            console.log("TOKEN", token)
+                            // console.log(user, pass);
+                            // console.log("login ok");
+                            // console.log("TOKEN", token)
                             res.cookie('user_data', JSON.stringify({ user, token }), { httpOnly: true, maxAge: 3600000 });
                             // res
                             //     .cookie('access_token', token, {
@@ -189,7 +189,7 @@ export const createBack_user = async (req, res) => {
                 //res.sendStatus(204); // 204 OK
                 res.json({ message: 'Back_user deleted successfully: ' + req.params.id });
             } catch (err) {
-                console.error(err);
+                // console.error(err);
                 res.status(500).send('Error deleting Back_user');
             }
         };

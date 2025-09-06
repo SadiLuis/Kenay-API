@@ -14,7 +14,7 @@ export const getIndexraiz = async (req, res) => {
     //throw new Error("My error"); //error para pruebas
     const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
     // 2. Renderiza la vista 'profile' y pasa los datos de la cookie    
-    console.log("cookiedata de woo_rubros", cookieData)
+    // // console.log("cookiedata de woo_rubros", cookieData)
     const token = cookieData.token;
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token')
@@ -24,7 +24,7 @@ export const getIndexraiz = async (req, res) => {
       res.render('index.ejs');
     }
   } catch (err) {
-    console.error(err);
+    // // console.error(err);
     res.status(401).send('Index.ejs - acceso no Autorizado sin Token')
     //res.status(500).send('Error listing Woo_rubross');  
   };
@@ -50,7 +50,7 @@ export const getIndexRegister = async (req, res) => {
 
 export const getIndex = async (req, res) =>  {  
     const [result] = await pool.query('SELECT "KENAY_SA" AS result');  
-    console.log(result);  
+    // // console.log(result);  
     res.json(result);
   };
 
