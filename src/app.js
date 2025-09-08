@@ -29,6 +29,9 @@ import pedido_detalle from './routes/pedido_detalle.routes.js'
 import back_usersRoutes from './routes/auth.routes.js'; // Assuming you have a controller for Back_user
 import auth_Routes from "./routes/auth.routes.js"
 import {authenticateToken} from "./controllers/auth.controller.js"
+import tbl_talle from './routes/tbl_talle.routes.js';
+import tbl_talles from './routes/tbl_talles.routes.js';
+
 
 import cookieParser from 'cookie-parser';
 const app = express();
@@ -74,11 +77,17 @@ app.use('/api',  tbl_colores);
 app.use('/api',  pedido_detalle);
 app.use('/api',  back_usersRoutes);
 app.use('/api',  auth_Routes);
+app.use('/api',  tbl_talle);
+app.use('/api',  tbl_talles);
+
+
+
 
 app.use((req, res, next) => {
-  res.status(404).send('<h3 style="color: black;text-align:center;">EndPoint Not Found / Ruta o Dirección no Encontrada</h3>'); //si no se encuentra la ruta
+  res.status(404).send('<h3 style="color: black;text-align:center;">EndPoint Not Found / Ruta no Encontrada</h3>'); //si no se encuentra la ruta
   // Optionally, you can log the request method and URL
   //res.status(404).json({ message: 'EndPoint Not Found' }); //si no se encuentra la ruta
 });
+
 
 export default app;

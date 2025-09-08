@@ -11,7 +11,7 @@ export const getArt_subrubros = async (req, res) => {
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token')
     } else {
-      const [rows] = await pool.query('SELECT * FROM kenay_sa.art_subrubro');
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.art_subrubro  WHERE Nombre_sub != "NO USAR" AND Nombre_sub != "NO" AND Nombre_sub != "(sin subrubro)"');
       res.json(rows);
     }
   } catch (err) {

@@ -11,7 +11,7 @@ export const getArt_rubros = async (req, res) => {
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token')
     } else {
-      const [rows] = await pool.query('SELECT * FROM kenay_sa.art_rubro');
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.art_rubro WHERE Nombre_Rub != "NO USAR"');
     res.json(rows);
     }
   } catch (err) {

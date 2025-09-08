@@ -12,7 +12,7 @@ export const getArt_depositos = async (req, res) => {
       return res.status(403).send('Acceso no Autorizado, no llega token')
     } else {
       //const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito WHERE Descripcion_art NOT LIKE "%BAJA%" limit 500');
-      const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito WHERE Rubro_dep != 0 AND Descripcion_art != "%BAJA%" ORDER BY Codigo_art ASC limit 500');
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito WHERE Rubro_dep != 0 AND Descripcion_art != "%BAJA%" AND Baja_art != 1 AND TieneImagen != "No" AND Marca_Baja !=	"SI" ORDER BY Codigo_art ASC limit 1000');
       //SELECT * FROM kenay_sa.art_deposito where Descripcion_art LIKE '%baja%' limit 20; //FILTRA POR LOS Q EN DESCRIPCION DICE BAJA EN ALGUN LADO
       //const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito limit 500');
       res.json(rows);

@@ -11,7 +11,7 @@ export const getArt_imagens = async (req, res) => {
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token')
     } else {
-      const [rows] = await pool.query('SELECT * FROM kenay_sa.Art_imagen ORDER BY Codigo_art ASC limit 5.00');
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.Art_imagen ORDER BY Codigo_art ASC limit 500');
       const imagesWithBase64 = rows.map(row => {
         if (row.imagen) {
           // Create a Buffer from the BLOB data and convert it to a Base64 string
