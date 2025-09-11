@@ -2,7 +2,7 @@ import {Router} from "express";
 
 const router = Router();
 
-import { getArt_depositos,  getArt_depositos_cursor, getArt_deposito, createArt_deposito, updateArt_deposito, deleteArt_deposito   } from "../controllers/art_deposito.controller.js";
+import { getArt_depositos,  getArt_depositostalles, getArt_depositostallespaginate, getArt_depositostallespaginatecursor, getArt_depositos_cursor, getArt_deposito, createArt_deposito, updateArt_deposito, deleteArt_deposito   } from "../controllers/art_deposito.controller.js";
 
 
 router.get('/', (req, res) => {
@@ -28,6 +28,12 @@ router.get('/art_depositos_cursor',  getArt_depositos_cursor);
 
 // Define routes for indexes
 router.get('/art_depositos', getArt_depositos);
+
+router.get('/art_depositostalles', getArt_depositostalles);
+
+router.get('/art_depositostallespaginate', getArt_depositostallespaginate);
+
+router.get('/art_depositostallespaginatecursor', getArt_depositostallespaginatecursor);
 
 router.get('/art_deposito/:id', getArt_deposito)
 

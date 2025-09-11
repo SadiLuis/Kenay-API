@@ -1,5 +1,95 @@
 import { pool } from '../db.js'; // Assuming you have a db.js file that exports a configured MySQL pool
 
+//import {express} from "express"; 
+import express from 'express';
+import { google } from 'googleapis';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Sirve archivos estáticos desde la carpeta 'public'
+const app = express();
+const port = 5600;
+
+// Configura credenciales de la cuenta de Google
+const KEYFILEPATH = path.join(__dirname, 'kenaysa-rdit-d90cd24434ad.json');
+const SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+
+const auth = new google.auth.GoogleAuth({
+  keyFile: KEYFILEPATH,
+  scopes: SCOPES,
+});
+
+// ID de la carpeta de Google Drive imágenes
+const FOLDER_ID = '1DLGIEP2STdquLzDda6Bs-tq6cAsqnGKq';
+
+export const imagenes = async (req, res) => {
+  try {
+    
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;    
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      const drive = google.drive({ version: 'v3', auth });
+      const allImages = await searchInFolder(drive, FOLDER_ID);
+      if (!allImages || allImages.length === 0) {
+        console.log('No se encontraron archivos de imagen en la carpeta y sus subcarpetas.');
+        return res.json([]);
+      }
+      const imagesJson = allImages.map(file => ({
+        id: file.name,
+        nombre: file.name,
+      }));
+      console.log('Imágenes encontradas:', imagesJson.length);
+      res.json(imagesJson);
+    }
+  } catch (error) {
+    console.error('Error al listar archivos de Google Drive:', error);
+    res.status(500).json({ error: 'Error al obtener la lista de imágenes.' });
+  }
+};
+
+const searchInFolder = async (drive, folderId) => {
+  let imageList = [];
+  let pageToken = null;
+
+  do {
+    const response = await drive.files.list({
+      q: `'${folderId}' in parents`,
+      fields: 'nextPageToken, files(id, name, mimeType)',
+      pageToken: pageToken,
+    });
+
+    const files = response.data.files;
+    if (!files) {
+      break;
+    }
+
+    for (const file of files) {
+      if (file.mimeType === 'application/vnd.google-apps.folder') {
+        const subfolderImages = await searchInFolder(drive, file.id);
+        imageList = imageList.concat(subfolderImages);
+      } else if (file.mimeType.startsWith('image/')) {
+        imageList.push(file);
+      }
+    }
+    pageToken = response.data.nextPageToken;
+  } while (pageToken);
+  return imageList;
+}
+
+
+export const imagen = async (req, res) => {
+  try {
+    console.log('armar aca por ID')
+  } catch (error) {
+    console.error('Error al servir la imagen:', error);
+    res.status(500).send('Error al obtener la imagen.  o Token invalido');
+  }
+};
 
 export const getArt_imagens = async (req, res) => {
   try {

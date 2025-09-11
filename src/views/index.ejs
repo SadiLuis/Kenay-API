@@ -30,12 +30,40 @@
         <form action="/index" method="post">
           <div class="form-group">
             <p>
+              <a target="_blank">GDrive</a>.imagenes-GDrive (deshabilitado) /imagenes
+            </p>
+            <p>
+              <a href="art_depositostalles" target="_blank">art_depositostalles</a>.art_depositostalles
+            </p>
+            <h5 style="color:red">----------------------------Solo PAGINATE de Talles--------------------------------------------</h5> 
+            <h5 style = "color:green">
+            <p>
+              <a href="art_depositostallespaginate" target="_blank">art_depositostallespaginate</a>.art_depositostallespaginate
+            </p>           
+              <p> </p>
+              <a href="art_depositostallespaginate?page=1&limit=20" target="_blank">/Art_depositostallespaginate?page=1&limit=20</a>.Obtener la primera página con 20 art
+              <p></p>              
+               <a href="art_depositostallespaginate?page=2&limit=50" target="_blank">/Art_depositostallespaginate?page=2&limit=50</a>.Obtener segunda página con 50 art
+            </h5>
+            <h5 style="color:red">----------------------------PAGINATE CURSOR de Talles--------------------------------------------</h5> 
+            <h5 style = "color:blue">
+            <p>
+              <a href="art_depositostallespaginatecursor" target="_blank">art_depositostallespaginateCursor</a>.art_depositostallespaginateCursor
+            </p>          
+            
+              <p> </p>
+              <a href="art_depositostallespaginatecursor?limit=20" target="_blank">art_depositostallespaginatecursor?limit=20</a>.Para la primera página, no envías un cursor.
+              <p></p>              
+               <a href="art_depositostallespaginatecursor?limit=20&cursor=PROXIMO_CODIGO_ART" target="_blank">/Art_depositostalles?limit=20&cursor=PROXIMO_CODIGO_ART</a>.Siguientes solicitudes: Usas el nextCursor de la respuesta anterior para obtener la siguiente página.
+            </h5>
+            <h5 style="color:red">------------------------------------------------------------------------</h5>
+            <p>
               <a href="art_depositos" target="_blank">art_deposito</a>.art_deposito limit 10.000
             </p>
             <p>
               <a href="art_depositos_paginate" target="_blank">art_deposito_paginate</a>.art_deposito metodo Paginate
             </p>
-            <p>
+            
               <a href="art_depositos_cursor" target="_blank">/api/art_depositos_cursor</a>.art_deposito metodo paginate cursor
               <p></p> 
               <H5 style="color:red">Como llamar por si no sabes o por las dudas.Ejemplos: -> paginate metodo cursor</h5>
