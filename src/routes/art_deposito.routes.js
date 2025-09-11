@@ -16,11 +16,8 @@ import { getPaginatedAndFilteredData } from '../controllers/art_deposito.control
 // En este endpoint, el cliente puede usar la paginación
 // Ejemplo de URL: http://localhost:3000/articulos/depositos?page=2&limit=50
 router.get('/art_depositos_paginate', getPaginatedAndFilteredData('art_deposito', 'WHERE Descripcion_art NOT LIKE "%BAJA%"'));
-
-
 // To get the first page:
 // GET /api/art_depositos_cursor?limit=100
-
 // To get the next page:
 // GET /api/art_depositos_cursor?limit=100&cursor=ID_of_last_item_from_first_page
 router.get('/art_depositos_cursor',  getArt_depositos_cursor);

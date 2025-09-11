@@ -4,8 +4,6 @@ const router = Router();
 
 import {logoutback_user, deleteBack_user, getback_users, createBack_user, loginback_user, } from '../controllers/auth.controller.js';
 
-//defino la ruta de registro de usuarios 
-//authcontroller.register; // Route to handle user registration
 //RUTAS Q USO EN EL FRONT
 router.get('/back_users' , getback_users);
 router.post('/register', createBack_user);

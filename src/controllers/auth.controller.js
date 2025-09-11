@@ -11,9 +11,7 @@ import { Console } from 'console';
 const app = express();
 // Middleware to parse JSON bodies 
 app.use(express.json());
-// Your route handling code goes here
 
-//login
 export const getback_users = async (req, res) => {
     try {
         //throw new Error("My error"); //error para pruebas
@@ -29,8 +27,7 @@ export const getback_users = async (req, res) => {
             res.json(rows);
         }
     }
-    catch (err) {
-        // console.error(err);
+    catch (err) {        
         res.status(401).send('Index.ejs - acceso no Autorizado sin Token')
     }
 }
@@ -38,13 +35,6 @@ export const getback_users = async (req, res) => {
 
 //log out
 export const logoutback_user = async (req, res) => {
-    // try {
-    //     res.clearCookie('jtw')
-    //     return res.redirect('/api/login')
-    // } catch (err) {
-    //     console.error(err);
-    //     res.status(500).send('Error log out_user');
-    // }
     res.cookie('user_data', '', { expires: new Date(0), httpOnly: true });
     res.status(200).send({ message: 'Logout exitoso' });
 };
@@ -79,9 +69,9 @@ export const createBack_user = async (req, res) => {
                 res.redirect('/api/register');              
 
             }}} catch (err) {
-                // console.error(err);
+                
                 // console.log("Error creando Back_user", { user, name, pass });
-                // console.error(err);
+                
                 res.status(401).send('REGISTRO CANCELADO - Acceso no Autorizado sin Token o permisos')
                 // res.render('index')
                 // res.status(500).send('Error creating Back_user');
@@ -103,38 +93,13 @@ export const createBack_user = async (req, res) => {
                         res.redirect('/api/login')
                         console.log('contraseña incorrecta o usuario', result)
                     } else {
-                        if ((await bcrypt.compare(pass, result[0].back_userpass))) {
-                            //const user = result[0].back_user
+                        if ((await bcrypt.compare(pass, result[0].back_userpass))) {                            
                             // ... después de verificar la contraseña
                             const payload = { user };
-                            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
-                            // console.log(user, pass);
-                            // console.log("login ok");
-                            // console.log("TOKEN", token)
-                            res.cookie('user_data', JSON.stringify({ user, token }), { httpOnly: true, maxAge: 3600000 });
-                            // res
-                            //     .cookie('access_token', token, {
-                            //         httpOnly: true, //solo accede desde el servidor                        
-                            //         maxAge: 1000 * 60 * 60,
-                            //     })
+                            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });                            
+                            res.cookie('user_data', JSON.stringify({ user, token }), { httpOnly: true, maxAge: 3600000 });                            
                             const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
                             res.json(cookieData);
-                            //ENVIA A INDEX 
-                            // res.render('index.ejs', {
-                            //     pageTitle: 'Página de Inicio',
-                            //     userData: cookieData // Envía los datos de la cookie a la vista
-                            // });
-
-
-                            //.send({user, token})
-                            //.render("/api/raiz", user, token)
-                            //res.status(200).json({ message: "Login successful" } , token); 
-                            // const cookiesOptions = {
-                            //     expires: new Date(Date.now()+process.env.JWT_COOKIE_EXPIRES *24 * 60 *60 *1000),
-                            //     
-                            // }
-                            // res.cookie(jwt, token, cookiesOptions) 
-
                         } else {
                             console.log("Datos incorrectos Usuario o Contraseña")
                             res.redirect("/login")
@@ -142,8 +107,6 @@ export const createBack_user = async (req, res) => {
                     }
                 };
             } catch (err) {
-                console.error("Login function error:", err);
-                // Send a generic error response to the client
                 res.status(500).json({ message: "An internal server error occurred." });
             }
         };
@@ -160,24 +123,7 @@ export const createBack_user = async (req, res) => {
                 next();
             } catch {
                 res.status(401).send('acceso no Autorizado sin')
-            }
-            // Obtener el encabezado de autorización
-            // const authHeader = req.headers['authorization'];
-            // // Extraer el token (formato: "Bearer TOKEN")
-            // //const token = authHeader && authHeader.split(' ')[1];
-            // console.log("authHeader", authHeader);
-            // const token = req.cookies.access_token
-            // console.log ('token con cookie', token)
-            // if (!token) {
-            //     return res.status(403).send('Acceso no Autorizado') 
-            // } else {
-            //     const data = jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-            //         if (err) return res.sendStatus(403);
-            //         console.log("Token", data)
-            //         req.user = user;
-            //         next();
-            //     })
-            // }
+            }            
         }
 
         export const deleteBack_user = async (req, res) => {
@@ -186,10 +132,9 @@ export const createBack_user = async (req, res) => {
                 if (result.affectedRows <= 0) return res.status(404).json({
                     message: 'Back_user not found'
                 });
-                //res.sendStatus(204); // 204 OK
                 res.json({ message: 'Back_user deleted successfully: ' + req.params.id });
             } catch (err) {
-                // console.error(err);
+                
                 res.status(500).send('Error deleting Back_user');
             }
         };

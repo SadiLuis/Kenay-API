@@ -15,7 +15,7 @@ router.get('/pedido_detalle/:id', getpedido_detalle);
 
 router.post('/pedido_detalle', createpedido_detalle);
 
-router.patch('/pedido_detalle/:id', updatepedido_detalle); //put actualiza todo el objeto, patch actualiza solo los campos que se envían
+router.patch('/pedido_detalle/:id', updatepedido_detalle);
 
 router.delete('/pedido_detalle/:id', deletepedido_detalle);
 

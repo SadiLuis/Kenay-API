@@ -2,7 +2,7 @@ import {Router} from "express";
 
 const router = Router();
 
-import {getTbl_personals, createTbl_personal, getTbl_personal, updateTbl_personal, deleteTbl_personal} from '../controllers/tbl_personal.controller.js'; // Assuming you have a controller for Tbl_personals
+import {getTbl_personals, createTbl_personal, getTbl_personal, updateTbl_personal, deleteTbl_personal} from '../controllers/tbl_personal.controller.js'; 
 
 // Define routes for Tbl_personals
 router.get('/', (req, res) => {
@@ -15,7 +15,7 @@ router.get('/Tbl_personal/:id', getTbl_personal);
 
 router.post('/Tbl_personal', createTbl_personal);
 
-router.patch('/Tbl_personal/:id', updateTbl_personal); //put actualiza todo el objeto, patch actualiza solo los campos que se envían
+router.patch('/Tbl_personal/:id', updateTbl_personal);
 
 router.delete('/Tbl_personal/:id', deleteTbl_personal);
 
