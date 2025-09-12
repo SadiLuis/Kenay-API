@@ -2,7 +2,7 @@ import {Router} from "express";
 
 const router = Router();
 
-import {getTbl_clientes, createTbl_cliente, getTbl_cliente, updateTbl_cliente, deleteTbl_cliente} from '../controllers/tbl_clientes.controller.js'; 
+import {getTbl_clientes, getTbl_clientesPaginate, createTbl_cliente, getTbl_cliente, updateTbl_cliente, deleteTbl_cliente} from '../controllers/tbl_clientes.controller.js'; 
 
 
 router.get('/', (req, res) => {
@@ -10,6 +10,8 @@ router.get('/', (req, res) => {
 });
 
 router.get('/Tbl_clientes', getTbl_clientes);
+
+router.get('/Tbl_clientesPaginate', getTbl_clientesPaginate);
 
 router.get('/Tbl_cliente/:id', getTbl_cliente);
 

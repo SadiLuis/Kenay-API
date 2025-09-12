@@ -30,6 +30,45 @@ export const createTbl_cliente = async (req, res) => {
   }
 };
 
+export const getTbl_clientesPaginate = async (req, res) => {
+  try {
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData ? cookieData.token : null;
+
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token');
+    }
+
+    // 1. Obtener los parámetros de paginación de la URL
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const offset = (page - 1) * limit;
+
+    // 2. Consulta para obtener el número total de clientes
+    const [totalRows] = await pool.query('SELECT COUNT(*) AS total FROM kenay_sa.tbl_clientes');
+    const totalItems = totalRows[0].total;
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // 3. Consulta para obtener los clientes de la página actual
+    const [rows] = await pool.query(
+      'SELECT * FROM kenay_sa.tbl_clientes LIMIT ? OFFSET ?',
+      [limit, offset]
+    );
+    
+    // 4. Devolver la respuesta con los datos y la metadata de paginación
+    res.json({
+      totalItems,
+      totalPages,
+      currentPage: page,
+      itemsPerPage: limit,
+      data: rows,
+    });
+    
+  } catch (err) {
+    res.status(401).send('tbl_clientes - acceso no Autorizado sin Token');
+  }
+};
+
 export const getTbl_cliente = async (req, res) => {
   try {
     const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
