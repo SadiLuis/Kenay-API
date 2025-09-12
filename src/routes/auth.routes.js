@@ -12,7 +12,4 @@ router.delete('/back_user/:id', deleteBack_user);
 
 router.get('/logout', logoutback_user);
 
-//router.post('/postregister', authcontroller.register); // Route to handle user registration
-
-
 export default router;

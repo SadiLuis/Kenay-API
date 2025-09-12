@@ -4,7 +4,6 @@ const router = Router();
 
 import {getTbl_provinciass, createTbl_provincias, getTbl_provincias, updateTbl_provincias, deleteTbl_provincias} from '../controllers/Tbl_provincias.controller.js';
 
-// Define routes for Tbl_provinciass
 router.get('/', (req, res) => {
   res.send('Estas en la raíz de la API de KENAY SA');
 });

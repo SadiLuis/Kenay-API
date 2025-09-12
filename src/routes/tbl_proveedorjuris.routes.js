@@ -4,7 +4,6 @@ const router = Router();
 
 import {getTbl_proveedorjuriss, createTbl_proveedorjuris, getTbl_proveedorjuris, updateTbl_proveedorjuris, deleteTbl_proveedorjuris} from '../controllers/Tbl_proveedorjuris.controller.js';
 
-// Define routes for Tbl_proveedorjuriss
 router.get('/', (req, res) => {
   res.send('Estas en la raíz de la API de KENAY SA');
 });

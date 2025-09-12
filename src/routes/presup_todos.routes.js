@@ -4,7 +4,6 @@ const router = Router();
 
 import {getPresup_todos, createPresup_todo, getPresup_todo, updatePresup_todo, deletePresup_todo} from '../controllers/presup_todos.controller.js'; 
 
-// Define routes for Clients
 router.get('/', (req, res) => {
   res.send('Estas en la raíz de la API de KENAY SA');
 });

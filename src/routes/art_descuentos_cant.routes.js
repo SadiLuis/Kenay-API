@@ -8,7 +8,6 @@ router.get('/', (req, res) => {
   res.send('KENAY SA - API REST con MySQL y Node.js - BACKEND - 15-08-25');
 });
 
-// Define routes for indexes
 router.get('/Art_descuentos_cants', getArt_descuentos_cants);
 
 router.get('/Art_descuentos_cant/:id', getArt_descuentos_cant)

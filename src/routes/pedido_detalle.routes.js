@@ -4,7 +4,6 @@ const router = Router();
 
 import {getpedido_detalles, createpedido_detalle, getpedido_detalle, updatepedido_detalle, deletepedido_detalle} from '../controllers/pedido_detalle.controller.js';
 
-// Define routes for employees
 router.get('/', (req, res) => {
   res.send('Estas en la raíz de la API de KENAY SA');
 });

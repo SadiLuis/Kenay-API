@@ -4,7 +4,6 @@ const router = Router();
 
 import {getTbl_provees, createTbl_provee, getTbl_provee, updateTbl_provee, deleteTbl_provee} from '../controllers/Tbl_provee.controller.js'; 
 
-// Define routes for Tbl_provees
 router.get('/', (req, res) => {
   res.send('Estas en la raíz de la API de KENAY SA');
 });

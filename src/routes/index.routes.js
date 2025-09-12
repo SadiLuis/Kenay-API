@@ -6,11 +6,11 @@ import {getIndexRegister, getIndexLogin, getIndexraiz, getIndex, createIndex, id
 
 
 // defino la ruta de login y vistas
-router.get('/raiz', getIndexraiz); // Route to render the index page
-router.get('/login', getIndexLogin); // Route to render the login page
-router.get('/register', getIndexRegister); // Route to render the register page
+router.get('/raiz', getIndexraiz);
+router.get('/login', getIndexLogin);
+router.get('/register', getIndexRegister);
 
-// Define routes for indexes
+
 router.get('/index', getIndex);
 
 router.get('/index/:id', idIndex)

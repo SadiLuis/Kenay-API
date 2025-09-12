@@ -14,5 +14,4 @@ router.get('/Caja_med_pagos', getCaja_med_pagos);
 
 router.get('/Caja_med_pago/:id', getCaja_med_pago)
 
-
 export default router;

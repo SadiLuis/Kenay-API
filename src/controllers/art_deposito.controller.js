@@ -172,106 +172,106 @@ export const getArt_depositostallespaginate = async (req, res) => {
       OFFSET ?
     `;
     const [rows] = await pool.query(dataQuery, [limit, offset]);
-    
+
     // --- 4. Agrupar los artículos de la página actual
     const groupedArticles = {};
     rows.forEach(item => {
-        const talleMatch = item.Codigo_art.match(/\.([0-9]+)$/);
-        const codigoBase = talleMatch
-            ? item.Codigo_art.substring(0, talleMatch.index)
-            : item.Codigo_art;
-        const talle = talleMatch ? talleMatch[1] : 'N/A';
-        const descripcionLimpia = item.Descripcion_art.replace(/\s*(\.|-)\s*[0-9]+$/, '');
-        if (!groupedArticles[codigoBase]) {
-            groupedArticles[codigoBase] = {
-                Codigo_art: codigoBase,
-                descripcion: descripcionLimpia,
-                talles: [],
-                Codigo_Sintalle: item.Codigo_Sintalle,
-                FechaIn_dep: item.FechaIn_dep,
-                FechaMod_dep: item.FechaMod_dep,
-                Rubro_dep: item.Rubro_dep,
-                Subrubro_dep: item.Subrubro_dep,
-                Temporada_dep: item.Temporada_dep,
-                TieneImagen: item.TieneImagen,
-                Ultima_Compra: item.Ultima_Compra,
-                Compras_total: item.Compras_total,
-                Bonifica_dep: item.Bonifica_dep,
-                Notas_dep: item.Notas_dep,
-                Marca_Art: item.Marca_Art,
-                Cantidad_min: item.Cantidad_min,
-                Codigo_prov: item.Codigo_prov,
-                Inventariado_art: item.Inventariado_art,
-                Fecha_inventario: item.Fecha_inventario,
-                PrecioManual_art: item.PrecioManual_art,
-                PrecioNoVence_art: item.PrecioNoVence_art,
-                Gan_Lista4: item.Gan_Lista4,
-                Gan_Lista3: item.Gan_Lista3,
-                Gan_Lista1: item.Gan_Lista1,
-                Gan_Lista2: item.Gan_Lista2,
-                Gan_Lista5: item.Gan_Lista5,
-                Gan_Lista6: item.Gan_Lista6,
-                Impuesto_1: item.Impuesto_1,
-                Descripcion_corta: item.Descripcion_corta,
-                Baja_art: item.Baja_art,
-                TipoImpuesto_art: item.TipoImpuesto_art,
-                Impuestos_art: item.Impuestos_art,
-                Segunda_unidad: item.Segunda_unidad,
-                BotonPrioridad_art: item.BotonPrioridad_art,
-                MaterialTipo_art: item.MaterialTipo_art,
-                Pagina_art: item.Pagina_art,
-                Unidad_compra: item.Unidad_compra,
-                Marca_Baja: item.Marca_Baja,
-                Desc_auto: item.Desc_auto,
-                EnOferta_art: item.EnOferta_art,
-                NoVender_art: item.NoVender_art,
-                AuxiliarFijo_art: item.AuxiliarFijo_art,
-                Publicar_Web: item.Publicar_Web,
-                Desc_financiero: item.Desc_financiero,
-                ConceptoFE_art: item.ConceptoFE_art,
-                Vencimdias_art: item.Vencimdias_art,
-                Publicar_WebConST: item.Publicar_WebConST,
-                Publicar_WebSTMin: item.Publicar_WebSTMin,
-                Imagen1_art: item.Imagen1_art,
-                Imagen2_art: item.Imagen2_art,
-                Imagen3_art: item.Imagen3_art,
-                Imagen4_art: item.Imagen4_art,
-                Talle_dep: item.Talle_dep,
-                Perfil_impuestos: item.Perfil_impuestos,
-                CantidadPack_art: item.CantidadPack_art,
-                Tamano_art1: item.Tamano_art1,
-                Tamano_art2: item.Tamano_art2,
-                Tamano_art3: item.Tamano_art3,
-                Tamano_art4: item.Tamano_art4,
-                ModoPrecio_art: item.ModoPrecio_art,
-                Pesable_art: item.Pesable_art,
-                PideObserva_art: item.PideObserva_art,
-                NoReporte_art: item.NoReporte_art,
-                UserMod_art: item.UserMod_art,
-                ModOrigen_art: item.ModOrigen_art,
-                ID_Art: item.ID_Art,
-                LastUpdate_art: item.LastUpdate_art
-            };
-        }
-        const talleData = {
-            talle: talle,
-            Cantidad_dep: item.Cantidad_dep,
-            Precio_Costo: item.Precio_Costo,
-            Precio_CostoUSD: item.Precio_CostoUSD,
-            Costo_ante: item.Costo_ante,
-            Precio_Lista1: item.Precio_Lista1,
-            Precio_Lista2: item.Precio_Lista2,
-            Precio_Lista3: item.Precio_Lista3,
-            Precio_Lista4: item.Precio_Lista4,
-            Precio_Lista5: item.Precio_Lista5,
-            Precio_Lista6: item.Precio_Lista6,
-            Iva_art: item.Iva_art,
+      const talleMatch = item.Codigo_art.match(/\.([0-9]+)$/);
+      const codigoBase = talleMatch
+        ? item.Codigo_art.substring(0, talleMatch.index)
+        : item.Codigo_art;
+      const talle = talleMatch ? talleMatch[1] : 'N/A';
+      const descripcionLimpia = item.Descripcion_art.replace(/\s*(\.|-)\s*[0-9]+$/, '');
+      if (!groupedArticles[codigoBase]) {
+        groupedArticles[codigoBase] = {
+          Codigo_art: codigoBase,
+          descripcion: descripcionLimpia,
+          talles: [],
+          Codigo_Sintalle: item.Codigo_Sintalle,
+          FechaIn_dep: item.FechaIn_dep,
+          FechaMod_dep: item.FechaMod_dep,
+          Rubro_dep: item.Rubro_dep,
+          Subrubro_dep: item.Subrubro_dep,
+          Temporada_dep: item.Temporada_dep,
+          TieneImagen: item.TieneImagen,
+          Ultima_Compra: item.Ultima_Compra,
+          Compras_total: item.Compras_total,
+          Bonifica_dep: item.Bonifica_dep,
+          Notas_dep: item.Notas_dep,
+          Marca_Art: item.Marca_Art,
+          Cantidad_min: item.Cantidad_min,
+          Codigo_prov: item.Codigo_prov,
+          Inventariado_art: item.Inventariado_art,
+          Fecha_inventario: item.Fecha_inventario,
+          PrecioManual_art: item.PrecioManual_art,
+          PrecioNoVence_art: item.PrecioNoVence_art,
+          Gan_Lista4: item.Gan_Lista4,
+          Gan_Lista3: item.Gan_Lista3,
+          Gan_Lista1: item.Gan_Lista1,
+          Gan_Lista2: item.Gan_Lista2,
+          Gan_Lista5: item.Gan_Lista5,
+          Gan_Lista6: item.Gan_Lista6,
+          Impuesto_1: item.Impuesto_1,
+          Descripcion_corta: item.Descripcion_corta,
+          Baja_art: item.Baja_art,
+          TipoImpuesto_art: item.TipoImpuesto_art,
+          Impuestos_art: item.Impuestos_art,
+          Segunda_unidad: item.Segunda_unidad,
+          BotonPrioridad_art: item.BotonPrioridad_art,
+          MaterialTipo_art: item.MaterialTipo_art,
+          Pagina_art: item.Pagina_art,
+          Unidad_compra: item.Unidad_compra,
+          Marca_Baja: item.Marca_Baja,
+          Desc_auto: item.Desc_auto,
+          EnOferta_art: item.EnOferta_art,
+          NoVender_art: item.NoVender_art,
+          AuxiliarFijo_art: item.AuxiliarFijo_art,
+          Publicar_Web: item.Publicar_Web,
+          Desc_financiero: item.Desc_financiero,
+          ConceptoFE_art: item.ConceptoFE_art,
+          Vencimdias_art: item.Vencimdias_art,
+          Publicar_WebConST: item.Publicar_WebConST,
+          Publicar_WebSTMin: item.Publicar_WebSTMin,
+          Imagen1_art: item.Imagen1_art,
+          Imagen2_art: item.Imagen2_art,
+          Imagen3_art: item.Imagen3_art,
+          Imagen4_art: item.Imagen4_art,
+          Talle_dep: item.Talle_dep,
+          Perfil_impuestos: item.Perfil_impuestos,
+          CantidadPack_art: item.CantidadPack_art,
+          Tamano_art1: item.Tamano_art1,
+          Tamano_art2: item.Tamano_art2,
+          Tamano_art3: item.Tamano_art3,
+          Tamano_art4: item.Tamano_art4,
+          ModoPrecio_art: item.ModoPrecio_art,
+          Pesable_art: item.Pesable_art,
+          PideObserva_art: item.PideObserva_art,
+          NoReporte_art: item.NoReporte_art,
+          UserMod_art: item.UserMod_art,
+          ModOrigen_art: item.ModOrigen_art,
+          ID_Art: item.ID_Art,
+          LastUpdate_art: item.LastUpdate_art
         };
-        if (!groupedArticles[codigoBase].talles.some(t => t.talle === talle)) {
-            groupedArticles[codigoBase].talles.push(talleData);
-        }
+      }
+      const talleData = {
+        talle: talle,
+        Cantidad_dep: item.Cantidad_dep,
+        Precio_Costo: item.Precio_Costo,
+        Precio_CostoUSD: item.Precio_CostoUSD,
+        Costo_ante: item.Costo_ante,
+        Precio_Lista1: item.Precio_Lista1,
+        Precio_Lista2: item.Precio_Lista2,
+        Precio_Lista3: item.Precio_Lista3,
+        Precio_Lista4: item.Precio_Lista4,
+        Precio_Lista5: item.Precio_Lista5,
+        Precio_Lista6: item.Precio_Lista6,
+        Iva_art: item.Iva_art,
+      };
+      if (!groupedArticles[codigoBase].talles.some(t => t.talle === talle)) {
+        groupedArticles[codigoBase].talles.push(talleData);
+      }
     });
-    const paginatedArticles = Object.values(groupedArticles);    
+    const paginatedArticles = Object.values(groupedArticles);
     // --- 5. Enviar respuesta con metadatos de paginación
     res.json({
       totalItems: totalItems,
@@ -307,47 +307,47 @@ export const getArt_depositostallespaginatecursor = async (req, res) => {
     if (lastId) {
       dataQuery += ` AND Codigo_art > ?`;
       queryParams.push(lastId);
-    }    
+    }
     // El orden y el límite son cruciales para la paginación por cursor
     dataQuery += ` ORDER BY Codigo_art ASC LIMIT ?`;
     queryParams.push(limit);
-    const [rows] = await pool.query(dataQuery, queryParams);    
+    const [rows] = await pool.query(dataQuery, queryParams);
     // --- 3. Procesar y agrupar los artículos
     const groupedArticles = {};
     rows.forEach(item => {
-        const talleMatch = item.Codigo_art.match(/\.([0-9]+)$/);
-        const codigoBase = talleMatch ? item.Codigo_art.substring(0, talleMatch.index) : item.Codigo_art;
-        const talle = talleMatch ? talleMatch[1] : 'N/A';
-        const descripcionLimpia = item.Descripcion_art.replace(/\s*(\.|-)\s*[0-9]+$/, '');
+      const talleMatch = item.Codigo_art.match(/\.([0-9]+)$/);
+      const codigoBase = talleMatch ? item.Codigo_art.substring(0, talleMatch.index) : item.Codigo_art;
+      const talle = talleMatch ? talleMatch[1] : 'N/A';
+      const descripcionLimpia = item.Descripcion_art.replace(/\s*(\.|-)\s*[0-9]+$/, '');
 
-        if (!groupedArticles[codigoBase]) {
-            groupedArticles[codigoBase] = {
-                Codigo_art: codigoBase,
-                descripcion: descripcionLimpia,
-                talles: [],
-                ...item
-            };
-        }
-        const talleData = {
-            talle: talle,
-            Cantidad_dep: item.Cantidad_dep,
-            Precio_Costo: item.Precio_Costo,
-            Precio_CostoUSD: item.Precio_CostoUSD,
-            Costo_ante: item.Costo_ante,
-            Precio_Lista1: item.Precio_Lista1,
-            Precio_Lista2: item.Precio_Lista2,
-            Precio_Lista3: item.Precio_Lista3,
-            Precio_Lista4: item.Precio_Lista4,
-            Precio_Lista5: item.Precio_Lista5,
-            Precio_Lista6: item.Precio_Lista6,
-            Iva_art: item.Iva_art,
+      if (!groupedArticles[codigoBase]) {
+        groupedArticles[codigoBase] = {
+          Codigo_art: codigoBase,
+          descripcion: descripcionLimpia,
+          talles: [],
+          ...item
         };
-        if (!groupedArticles[codigoBase].talles.some(t => t.talle === talle)) {
-            groupedArticles[codigoBase].talles.push(talleData);
-        }
+      }
+      const talleData = {
+        talle: talle,
+        Cantidad_dep: item.Cantidad_dep,
+        Precio_Costo: item.Precio_Costo,
+        Precio_CostoUSD: item.Precio_CostoUSD,
+        Costo_ante: item.Costo_ante,
+        Precio_Lista1: item.Precio_Lista1,
+        Precio_Lista2: item.Precio_Lista2,
+        Precio_Lista3: item.Precio_Lista3,
+        Precio_Lista4: item.Precio_Lista4,
+        Precio_Lista5: item.Precio_Lista5,
+        Precio_Lista6: item.Precio_Lista6,
+        Iva_art: item.Iva_art,
+      };
+      if (!groupedArticles[codigoBase].talles.some(t => t.talle === talle)) {
+        groupedArticles[codigoBase].talles.push(talleData);
+      }
     });
 
-    const paginatedArticles = Object.values(groupedArticles);    
+    const paginatedArticles = Object.values(groupedArticles);
     // --- 4. Determinar el próximo cursor y si hay más páginas
     const nextCursor = rows.length > 0 ? rows[rows.length - 1].Codigo_art : null;
     const hasNextPage = rows.length === limit;
@@ -405,7 +405,6 @@ export const getArt_depositos_cursor = async (req, res) => {
       // console.log("Acceso no Autorizado, no llega token en la cookie");
       return res.status(401).send('Acceso no Autorizado. Por favor, inicie sesión.');
     }
-
     // 2. Get pagination parameters from the URL
     const lastId = req.query.lastId ? parseInt(req.query.lastId) : 0; // The cursor
     const limit = parseInt(req.query.limit) || 50; // Items per page, default 50
@@ -443,13 +442,19 @@ export const getArt_depositos_cursor = async (req, res) => {
 
 export const getArt_deposito = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito WHERE Codigo_art = ?', [req.params.id])
-    if (rows.length <= 0) {
-      return res.status(404).send('Art_deposito not found: ' + req.params.id);
-    } else if (rows.length > 1) {
-      return res.status(500).send('Multiple Art_depositos found with the same ID');
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito WHERE Codigo_art = ?', [req.params.id])
+      if (rows.length <= 0) {
+        return res.status(404).send('Art_deposito not found: ' + req.params.id);
+      } else if (rows.length > 1) {
+        return res.status(500).send('Multiple Art_depositos found with the same ID');
+      }
+      res.json(rows[0]);
     }
-    res.json(rows[0]);    
   } catch (err) {
     res.status(500).send('Art_deposito not found');
   }
@@ -457,8 +462,14 @@ export const getArt_deposito = async (req, res) => {
 
 export const createArt_deposito = async (req, res) => {
   try {
-    await pool.query('INSERT INTO kenay_sa.art_deposito SET ?', [req.body])
-    res.status(201).send('Art_deposito created successfully:' + JSON.stringify(req.body));
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      await pool.query('INSERT INTO kenay_sa.art_deposito SET ?', [req.body])
+      res.status(201).send('Art_deposito created successfully:' + JSON.stringify(req.body));
+    }
   } catch (err) {
     res.status(500).send('Error creating Art_deposito');
   }
@@ -466,11 +477,17 @@ export const createArt_deposito = async (req, res) => {
 
 export const deleteArt_deposito = async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM kenay_sa.art_deposito WHERE Codigo_art = ?', [req.params.id]);
-    if (result.affectedRows <= 0) return res.status(404).json({
-      message: 'Art_deposito not found'
-    });
-    res.sendStatus(204);
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      const [result] = await pool.query('DELETE FROM kenay_sa.art_deposito WHERE Codigo_art = ?', [req.params.id]);
+      if (result.affectedRows <= 0) return res.status(404).json({
+        message: 'Art_deposito not found'
+      });
+      res.sendStatus(204);
+    }
   } catch (err) {
     res.status(500).send('Error deleting Art_deposito');
   }
@@ -478,8 +495,14 @@ export const deleteArt_deposito = async (req, res) => {
 
 export const updateArt_deposito = async (req, res) => {
   try {
-    const [result] = await pool.query('UPDATE kenay_sa.art_deposito SET Nombre_ven = IFNULL(?, nombre_ven), Domicilio_ven = IFNULL(?, Domicilio_ven), Ciudad_ven = IFNULL(?, Ciudad_ven), Telefono_ven = IFNULL(?, Telefono_ven), Celular_ven = IFNULL(?, Celular_ven), comision_ven = IFNULL(?, comision_ven), Codigo_alta = IFNULL(?, Codigo_alta) WHERE Codigo_art = ?', [req.body.Nombre_ven, req.body.Domicilio_ven, req.body.Ciudad_ven, req.body.Telefono_ven, req.body.Celular_ven, req.body.comision_ven, req.body.Codigo_alta, req.params.id]);
-    res.json(result); 
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      const [result] = await pool.query('UPDATE kenay_sa.art_deposito SET Nombre_ven = IFNULL(?, nombre_ven), Domicilio_ven = IFNULL(?, Domicilio_ven), Ciudad_ven = IFNULL(?, Ciudad_ven), Telefono_ven = IFNULL(?, Telefono_ven), Celular_ven = IFNULL(?, Celular_ven), comision_ven = IFNULL(?, comision_ven), Codigo_alta = IFNULL(?, Codigo_alta) WHERE Codigo_art = ?', [req.body.Nombre_ven, req.body.Domicilio_ven, req.body.Ciudad_ven, req.body.Telefono_ven, req.body.Celular_ven, req.body.comision_ven, req.body.Codigo_alta, req.params.id]);
+      res.json(result);
+    }
   } catch (err) {
     res.status(500).send('Error updating Art_deposito');
   }

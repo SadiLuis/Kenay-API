@@ -13,7 +13,7 @@ router.get('/imagenes', imagenes);
 router.get('/imagen/:id', imagen);
 //--------------------------------
 
-// Define routes for indexes
+
 router.get('/Art_imagens', getArt_imagens);
 
 router.get('/Art_imagenspaginate', getArt_imagenspaginate);

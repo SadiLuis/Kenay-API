@@ -9,8 +9,6 @@ router.get('/', (req, res) => {
   res.send('KENAY SA - API REST con MySQL y Node.js - BACKEND - 15-08-25');
 });
 
-
-//art deposito con metodo paginacion
 import { getPaginatedAndFilteredData } from '../controllers/art_deposito.controller.js';
 
 // En este endpoint, el cliente puede usar la paginación
@@ -23,7 +21,6 @@ router.get('/art_depositos_paginate', getPaginatedAndFilteredData('art_deposito'
 router.get('/art_depositos_cursor',  getArt_depositos_cursor);
 
 
-// Define routes for indexes
 router.get('/art_depositos', getArt_depositos);
 
 router.get('/art_depositostalles', getArt_depositostalles);

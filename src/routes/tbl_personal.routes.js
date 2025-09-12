@@ -4,7 +4,6 @@ const router = Router();
 
 import {getTbl_personals, createTbl_personal, getTbl_personal, updateTbl_personal, deleteTbl_personal} from '../controllers/tbl_personal.controller.js'; 
 
-// Define routes for Tbl_personals
 router.get('/', (req, res) => {
   res.send('Estas en la raíz de la API de KENAY SA');
 });

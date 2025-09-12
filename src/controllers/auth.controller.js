@@ -27,7 +27,7 @@ export const getback_users = async (req, res) => {
             res.json(rows);
         }
     }
-    catch (err) {        
+    catch (err) {
         res.status(401).send('Index.ejs - acceso no Autorizado sin Token')
     }
 }
@@ -60,81 +60,89 @@ export const createBack_user = async (req, res) => {
                 // console.log('usuario no encontrado y Creado Nuevo');
                 //res.status(201).send('Creado User Nuevo' + JSON.stringify(req.body));
                 res.redirect('/api/login');
-            } 
+            }
             if (rows.length >= 0) {
                 // console.log(user, name, pass);
                 // console.log(rows);
                 //res.status(201).send('Error Creando Usuario porque ya existe en la tabla' + JSON.stringify(req.body));            
                 // console.log('Error creando Back_user: el usuario ya existe');
-                res.redirect('/api/register');              
+                res.redirect('/api/register');
 
-            }}} catch (err) {
-                
-                // console.log("Error creando Back_user", { user, name, pass });
-                
-                res.status(401).send('REGISTRO CANCELADO - Acceso no Autorizado sin Token o permisos')
-                // res.render('index')
-                // res.status(500).send('Error creating Back_user');
-                //res.redirect('/api/register');
             }
-        };
-
-        //metodo para loguear usuarios y debe ser un post
-        export const loginback_user = async (req, res) => {
-            try {
-                const user = req.body.user;
-                const pass = req.body.pass;
-                if (!user || !pass) {
-                    return res.status(400).json({ message: "Username and password are required" });
-                } else {
-                    const [result] = await pool.query('SELECT * FROM kenay_sa.back_user WHERE back_user = ?', user);
-                    //console.log("RESULT",result)
-                    if (result <= 0 || result == []) {
-                        res.redirect('/api/login')
-                        console.log('contraseña incorrecta o usuario', result)
-                    } else {
-                        if ((await bcrypt.compare(pass, result[0].back_userpass))) {                            
-                            // ... después de verificar la contraseña
-                            const payload = { user };
-                            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });                            
-                            res.cookie('user_data', JSON.stringify({ user, token }), { httpOnly: true, maxAge: 3600000 });                            
-                            const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
-                            res.json(cookieData);
-                        } else {
-                            console.log("Datos incorrectos Usuario o Contraseña")
-                            res.redirect("/login")
-                        }
-                    }
-                };
-            } catch (err) {
-                res.status(500).json({ message: "An internal server error occurred." });
-            }
-        };
-
-        // Middleware
-        export const authenticateToken = async (req, res, next) => {
-            const token = req.cookies.access_token
-            if (!token) {
-                return res.status(403).send('Acceso no Autorizado')
-            }
-            try {
-                jwt.verify(token, process.env.JWT_SECRET)
-                req.user = user;
-                next();
-            } catch {
-                res.status(401).send('acceso no Autorizado sin')
-            }            
         }
+    } catch (err) {
 
-        export const deleteBack_user = async (req, res) => {
-            try {
-                const [result] = await pool.query('DELETE FROM kenay_sa.back_user WHERE idback_user = ?', [req.params.id]);
-                if (result.affectedRows <= 0) return res.status(404).json({
-                    message: 'Back_user not found'
-                });
-                res.json({ message: 'Back_user deleted successfully: ' + req.params.id });
-            } catch (err) {
-                
-                res.status(500).send('Error deleting Back_user');
+        // console.log("Error creando Back_user", { user, name, pass });
+
+        res.status(401).send('REGISTRO CANCELADO - Acceso no Autorizado sin Token o permisos')
+        // res.render('index')
+        // res.status(500).send('Error creating Back_user');
+        //res.redirect('/api/register');
+    }
+};
+
+//metodo para loguear usuarios y debe ser un post
+export const loginback_user = async (req, res) => {
+    try {
+        const user = req.body.user;
+        const pass = req.body.pass;
+        if (!user || !pass) {
+            return res.status(400).json({ message: "Username and password are required" });
+        } else {
+            const [result] = await pool.query('SELECT * FROM kenay_sa.back_user WHERE back_user = ?', user);
+            //console.log("RESULT",result)
+            if (result <= 0 || result == []) {
+                res.redirect('/api/login')
+                console.log('contraseña incorrecta o usuario', result)
+            } else {
+                if ((await bcrypt.compare(pass, result[0].back_userpass))) {
+                    // ... después de verificar la contraseña
+                    const payload = { user };
+                    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+                    res.cookie('user_data', JSON.stringify({ user, token }), { httpOnly: true, maxAge: 3600000 });
+                    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+                    res.json(cookieData);
+                } else {
+                    console.log("Datos incorrectos Usuario o Contraseña")
+                    res.redirect("/login")
+                }
             }
         };
+    } catch (err) {
+        res.status(500).json({ message: "An internal server error occurred." });
+    }
+};
+
+// Middleware
+export const authenticateToken = async (req, res, next) => {
+    const token = req.cookies.access_token
+    if (!token) {
+        return res.status(403).send('Acceso no Autorizado')
+    }
+    try {
+        jwt.verify(token, process.env.JWT_SECRET)
+        req.user = user;
+        next();
+    } catch {
+        res.status(401).send('acceso no Autorizado sin')
+    }
+}
+
+export const deleteBack_user = async (req, res) => {
+    try {
+        const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+        const token = cookieData.token;
+        if (!token) {
+            return res.status(403).send('Acceso no Autorizado, no llega token')
+        } else {
+            const [result] = await pool.query('DELETE FROM kenay_sa.back_user WHERE idback_user = ?', [req.params.id]);
+            if (result.affectedRows <= 0) return res.status(404).json({
+                message: 'Back_user not found'
+            });
+            res.json({ message: 'Back_user deleted successfully: ' + req.params.id });
+        }
+    } catch (err) {
+
+        res.status(500).send('Error deleting Back_user');
+    }
+};

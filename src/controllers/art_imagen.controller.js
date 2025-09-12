@@ -21,58 +21,64 @@ import { pool } from '../db.js'; // Assuming you have a db.js file that exports 
 // const FOLDER_ID = '1DLGIEP2STdquLzDda6Bs-tq6cAsqnGKq';
 export const imagenes = async (req, res) => {
   try {
-    console.log('imagenes GDrive desactivadas');
-    res.status(500).json('imagenes GDrive desactivadas.');
-    // const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;    
-    // const token = cookieData.token;
-    // if (!token) {
-    //   return res.status(403).send('Acceso no Autorizado, no llega token')
-    // } else {
-    //   const drive = google.drive({ version: 'v3', auth });
-    //   const allImages = await searchInFolder(drive, FOLDER_ID);
-    //   if (!allImages || allImages.length === 0) {
-    //     console.log('No se encontraron archivos de imagen en la carpeta y sus subcarpetas.');
-    //     return res.json([]);
-    //   }
-    //   const imagesJson = allImages.map(file => ({
-    //     id: file.name,
-    //     nombre: file.name,
-    //   }));
-    //   console.log('Imágenes encontradas:', imagesJson.length);
-    //   res.json(imagesJson);
-    // }
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      console.log('imagenes GDrive desactivadas');
+      res.status(500).json('imagenes GDrive desactivadas.');
+      // const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;    
+      // const token = cookieData.token;
+      // if (!token) {
+      //   return res.status(403).send('Acceso no Autorizado, no llega token')
+      // } else {
+      //   const drive = google.drive({ version: 'v3', auth });
+      //   const allImages = await searchInFolder(drive, FOLDER_ID);
+      //   if (!allImages || allImages.length === 0) {
+      //     console.log('No se encontraron archivos de imagen en la carpeta y sus subcarpetas.');
+      //     return res.json([]);
+      //   }
+      //   const imagesJson = allImages.map(file => ({
+      //     id: file.name,
+      //     nombre: file.name,
+      //   }));
+      //   console.log('Imágenes encontradas:', imagesJson.length);
+      //   res.json(imagesJson);
+      // }
+    }
   } catch (error) {
     console.error('Error al listar archivos de Google Drive:', error);
     res.status(500).json({ error: 'Error al obtener la lista de imágenes.' });
   }
 };
 //const searchInFolder = async (drive, folderId) => {
-  // let imageList = [];
-  // let pageToken = null;
+// let imageList = [];
+// let pageToken = null;
 
-  // do {
-  //   const response = await drive.files.list({
-  //     q: `'${folderId}' in parents`,
-  //     fields: 'nextPageToken, files(id, name, mimeType)',
-  //     pageToken: pageToken,
-  //   });
+// do {
+//   const response = await drive.files.list({
+//     q: `'${folderId}' in parents`,
+//     fields: 'nextPageToken, files(id, name, mimeType)',
+//     pageToken: pageToken,
+//   });
 
-  //   const files = response.data.files;
-  //   if (!files) {
-  //     break;
-  //   }
+//   const files = response.data.files;
+//   if (!files) {
+//     break;
+//   }
 
-  //   for (const file of files) {
-  //     if (file.mimeType === 'application/vnd.google-apps.folder') {
-  //       const subfolderImages = await searchInFolder(drive, file.id);
-  //       imageList = imageList.concat(subfolderImages);
-  //     } else if (file.mimeType.startsWith('image/')) {
-  //       imageList.push(file);
-  //     }
-  //   }
-  //   pageToken = response.data.nextPageToken;
-  // } while (pageToken);
-  // return imageList;
+//   for (const file of files) {
+//     if (file.mimeType === 'application/vnd.google-apps.folder') {
+//       const subfolderImages = await searchInFolder(drive, file.id);
+//       imageList = imageList.concat(subfolderImages);
+//     } else if (file.mimeType.startsWith('image/')) {
+//       imageList.push(file);
+//     }
+//   }
+//   pageToken = response.data.nextPageToken;
+// } while (pageToken);
+// return imageList;
 //}
 export const imagen = async (req, res) => {
   try {
@@ -84,8 +90,8 @@ export const imagen = async (req, res) => {
 };
 
 export const getArt_imagens = async (req, res) => {
-  try {    
-    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;    
+  try {
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
     const token = cookieData.token;
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token')
@@ -143,7 +149,7 @@ export const getArt_imagenspaginate = async (req, res) => {
       currentPage: page,
       itemsPerPage: limit,
       data: imagesWithBase64,
-    });    
+    });
   } catch (err) {
     res.status(401).send('Art_imagen - acceso no Autorizado sin Token');
   }
@@ -151,46 +157,68 @@ export const getArt_imagenspaginate = async (req, res) => {
 
 export const getArt_imagen = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM kenay_sa.Art_imagen WHERE Codigo_art = ?', [req.params.id])
-    if (rows.length <= 0) {
-      return res.status(404).send('Art_imagen not found: ' + req.params.id);
-    } else if (rows.length > 1) {
-      return res.status(500).send('Multiple Art_imagen found with the same ID');
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.Art_imagen WHERE Codigo_art = ?', [req.params.id])
+      if (rows.length <= 0) {
+        return res.status(404).send('Art_imagen not found: ' + req.params.id);
+      } else if (rows.length > 1) {
+        return res.status(500).send('Multiple Art_imagen found with the same ID');
+      }
+      res.json(rows[0]);
     }
-    res.json(rows[0]);
-    //  res.json(rows);  manda como objeto, si se quiere como array, usar res.json([rows[0]])    
   } catch (err) {
-    
     res.status(500).send('Art_imagen not found');
   }
 }
 
 export const createArt_imagen = async (req, res) => {
   try {
-    await pool.query('INSERT INTO kenay_sa.Art_imagen SET ?', [req.body])
-    res.status(201).send('Art_imagen created successfully:' + JSON.stringify(req.body));
-  } catch (err) {    
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      await pool.query('INSERT INTO kenay_sa.Art_imagen SET ?', [req.body])
+      res.status(201).send('Art_imagen created successfully:' + JSON.stringify(req.body));
+    }
+  } catch (err) {
     res.status(500).send('Error creating Art_imagen');
   }
 };
 
 export const deleteArt_imagen = async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM kenay_sa.Art_imagen WHERE Codigo_art = ?', [req.params.id]);
-    if (result.affectedRows <= 0) return res.status(404).json({
-      message: 'Art_imagen not found'
-    });
-    res.sendStatus(204);
-  } catch (err) {    
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      const [result] = await pool.query('DELETE FROM kenay_sa.Art_imagen WHERE Codigo_art = ?', [req.params.id]);
+      if (result.affectedRows <= 0) return res.status(404).json({
+        message: 'Art_imagen not found'
+      });
+      res.sendStatus(204);
+    }
+  } catch (err) {
     res.status(500).send('Error deleting Art_imagen');
   }
 }
 
 export const updateArt_imagen = async (req, res) => {
   try {
-    const [result] = await pool.query('UPDATE kenay_sa.Art_imagen SET Nombre_ven = IFNULL(?, nombre_ven), Domicilio_ven = IFNULL(?, Domicilio_ven), Ciudad_ven = IFNULL(?, Ciudad_ven), Telefono_ven = IFNULL(?, Telefono_ven), Celular_ven = IFNULL(?, Celular_ven), comision_ven = IFNULL(?, comision_ven), Codigo_alta = IFNULL(?, Codigo_alta) WHERE Codigo_art = ?', [req.body.Nombre_ven, req.body.Domicilio_ven, req.body.Ciudad_ven, req.body.Telefono_ven, req.body.Celular_ven, req.body.comision_ven, req.body.Codigo_alta, req.params.id]);
-    res.json(result);
-  } catch (err) {    
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
+      const [result] = await pool.query('UPDATE kenay_sa.Art_imagen SET Nombre_ven = IFNULL(?, nombre_ven), Domicilio_ven = IFNULL(?, Domicilio_ven), Ciudad_ven = IFNULL(?, Ciudad_ven), Telefono_ven = IFNULL(?, Telefono_ven), Celular_ven = IFNULL(?, Celular_ven), comision_ven = IFNULL(?, comision_ven), Codigo_alta = IFNULL(?, Codigo_alta) WHERE Codigo_art = ?', [req.body.Nombre_ven, req.body.Domicilio_ven, req.body.Ciudad_ven, req.body.Telefono_ven, req.body.Celular_ven, req.body.comision_ven, req.body.Codigo_alta, req.params.id]);
+      res.json(result);
+    }
+  } catch (err) {
     res.status(500).send('Error updating Art_imagen');
   }
 }

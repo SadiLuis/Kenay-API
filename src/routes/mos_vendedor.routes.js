@@ -4,7 +4,6 @@ const router = Router();
 
 import {getMos_vendedors, createMos_vendedor, getMos_vendedor, updateMos_vendedor, deleteMos_vendedor} from '../controllers/mos_vendedor.controller.js'; 
 
-// Define routes for employees
 router.get('/', (req, res) => {
   res.send('Estas en la raíz de la API de KENAY SA');
 });
