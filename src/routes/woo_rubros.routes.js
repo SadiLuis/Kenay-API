@@ -9,7 +9,6 @@ router.get('/', (req, res) => {
   res.send('KENAY SA - API REST con MySQL y Node.js - BACKEND - 15-08-25');
 });
 
-// Define routes for indexes
 router.get('/Woo_rubros', getWoo_rubros);
 
 router.get('/Woo_rubro/:id', getWoo_rubro)

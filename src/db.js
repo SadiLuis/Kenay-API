@@ -16,8 +16,3 @@ export const pool = createPool({
   password: DB_PASSWORD, //contraseña del usuario root de MySQL en servidor de KenaySA
   database: DB_DATABASE
 });
-
-
-// ./ngrok.exe config add-authtoken 31Hr6zbpYLWpfwoxeDcWToCeRUu_5L81sNMU9YoGiopuBAZ4H
-// ./ngrok.exe http 3000  //para exponer el servidor a internet, usar ngrok
-//ngrok http 3000

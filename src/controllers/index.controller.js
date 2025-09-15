@@ -1,30 +1,29 @@
-import { pool } from '../db.js'; // Assuming you have a db.js file that exports a configured MySQL pool
+import { pool } from '../db.js'; 
 
-
-export const getIndexraiz = async (req, res) => {  
-    //router.get('/', (req, res) => {
+export const getIndexraiz = async (req, res) => {
+  try {
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null; 
+    const token = cookieData.token;
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token')
+    } else {
       res.render('index.ejs');
-      //res.send('KENAY SA - API REST con MySQL y Node.js - BACKEND - 15-08-25');
-      //<a href="https://macaw-striking-violently.ngrok-free.app/api/woo_rubros">Woo_rubros</a>    
+    }
+  } catch (err) {
+    res.status(401).send('Index.ejs - acceso no Autorizado sin Token')  
+  };  
 };
 
 export const getIndexLogin = async (req, res) => {  
-    //router.get('/', (req, res) => {
-      res.render('login.ejs');
-      //res.send('KENAY SA - API REST con MySQL y Node.js - BACKEND - 15-08-25');
-      //<a href="https://macaw-striking-violently.ngrok-free.app/api/woo_rubros">Woo_rubros</a>    
+      res.render('login.ejs');   
 };
 
 export const getIndexRegister = async (req, res) => {  
-    //router.get('/', (req, res) => {
-      res.render('register.ejs');
-      //res.send('KENAY SA - API REST con MySQL y Node.js - BACKEND - 15-08-25');
-      //<a href="https://macaw-striking-violently.ngrok-free.app/api/woo_rubros">Woo_rubros</a>    
+      res.render('register.ejs');   
 };
 
 export const getIndex = async (req, res) =>  {  
     const [result] = await pool.query('SELECT "KENAY_SA" AS result');  
-    console.log(result);  
     res.json(result);
   };
 

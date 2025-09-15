@@ -4,7 +4,6 @@ const router = Router();
 
 import {getpedido_detalles, createpedido_detalle, getpedido_detalle, updatepedido_detalle, deletepedido_detalle} from '../controllers/pedido_detalle.controller.js';
 
-// Define routes for employees
 router.get('/', (req, res) => {
   res.send('Estas en la raíz de la API de KENAY SA');
 });
@@ -15,7 +14,7 @@ router.get('/pedido_detalle/:id', getpedido_detalle);
 
 router.post('/pedido_detalle', createpedido_detalle);
 
-router.patch('/pedido_detalle/:id', updatepedido_detalle); //put actualiza todo el objeto, patch actualiza solo los campos que se envían
+router.patch('/pedido_detalle/:id', updatepedido_detalle);
 
 router.delete('/pedido_detalle/:id', deletepedido_detalle);
 

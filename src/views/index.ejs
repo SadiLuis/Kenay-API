@@ -1,33 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title><%= pageTitle %></title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .user-info { border: 1px solid #ccc; padding: 15px; border-radius: 8px; }
-  </style>
-</head>
-<body>
-  <!-- <h1><%= pageTitle %></h1> -->
-
-  <% if (userData) { %>
-    <div class="user-info">
-      <h2>Información del Usuario</h2>
-      <p style="color:red"><strong>User:</strong> <%= userData.user %></p>
-      <!-- <p><strong>Token:</strong> <%= userData.token %></p> -->
-      LOG-OUT  ----> <a href="logout">*** LOG-OUT ****</a>.
-    </div>
-  <% } else { %>
-    <p>No se encontraron datos del usuario en las cookies.</p>
-  <% } %>
-  
-</body>
-</html>
-<!DOCTYPE html>
 <html>
   <head>
     <title>Kenay.SA</title>
+    
     <link
       rel="stylesheet"
       href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
@@ -45,16 +20,71 @@
   <body>
     <div class="container">
       <div class="col-sm-6 col-sm-offset-3">
-        <h1><span class="fa fa-sign-in"></span> A P I S</h1>
-
+        <h1><span class="fa fa-sign-in"></span> A P I S</h1> 
+<div class="user-info">       
+      LOG-OUT  ----> <a href="logout" style="text-shadow: 2px 2px 4px #888; font-weight: bold; color:red">*** LOG-OUT ****</a>.
+      <P></P>
+      <p style="color:red"> </p>  
+    </div>
         <!-- LOGIN FORM -->
         <form action="/index" method="post">
           <div class="form-group">
             <p>
-              <a href="art_depositos" target="_blank">art_deposito</a>.art_rubro
+              <a target="_blank">GDrive</a>.imagenes-GDrive (deshabilitado) /imagenes
             </p>
             <p>
-              <a href="art_rubros" target="_blank">art_rubro</a>.art_subrubro
+              <a href="art_depositostalles" target="_blank">art_depositostalles</a>.art_depositostalles
+            </p>
+            <h5 style="color:red">----------------------------Solo PAGINATE de Talles--------------------------------------------</h5> 
+            <h5 style = "color:green">
+            <p>
+              <a href="art_depositostallespaginate" target="_blank">art_depositostallespaginate</a>.art_depositostallespaginate
+            </p>           
+              <p> </p>
+              <a href="art_depositostallespaginate?page=1&limit=20" target="_blank">/Art_depositostallespaginate?page=1&limit=20</a>.Obtener la primera página con 20 art
+              <p></p>              
+               <a href="art_depositostallespaginate?page=2&limit=50" target="_blank">/Art_depositostallespaginate?page=2&limit=50</a>.Obtener segunda página con 50 art
+            </h5>
+            <h5 style="color:red">----------------------------PAGINATE CURSOR de Talles--------------------------------------------</h5> 
+            <h5 style = "color:blue">
+            <p>
+              <a href="art_depositostallespaginatecursor" target="_blank">art_depositostallespaginateCursor</a>.art_depositostallespaginateCursor
+            </p>          
+            
+              <p> </p>
+              <a href="art_depositostallespaginatecursor?limit=20" target="_blank">art_depositostallespaginatecursor?limit=20</a>.Para la primera página, no envías un cursor.
+              <p></p>              
+               <a href="art_depositostallespaginatecursor?limit=20&cursor=PROXIMO_CODIGO_ART" target="_blank">/Art_depositostalles?limit=20&cursor=PROXIMO_CODIGO_ART</a>.Siguientes solicitudes: Usas el nextCursor de la respuesta anterior para obtener la siguiente página.
+            </h5>
+            <h5 style="color:red">------------------------------------------------------------------------</h5>
+            <p>
+              <a href="art_depositos" target="_blank">art_deposito</a>.art_deposito limit 10.000
+            </p>
+            <p>
+              <a href="art_depositos_paginate" target="_blank">art_deposito_paginate</a>.art_deposito metodo Paginate
+            </p>
+            
+              <a href="art_depositos_cursor" target="_blank">/api/art_depositos_cursor</a>.art_deposito metodo paginate cursor
+              <p></p> 
+              <H5 style="color:red">Como llamar por si no sabes o por las dudas.Ejemplos: -> paginate metodo cursor</h5>
+                 
+              <a href="art_depositos_cursor?limit=100" target="_blank">/api/art_depositos_cursor?limit=100</a>
+              <!-- .art_deposito metodo Paginate Cursor limit=100               -->
+               <p></p>
+              
+              <a href="art_depositos_cursor?limit=100&cursor=ID_of_last_item_from_first_page" target="_blank">./api/art_depositos_cursor?limit=100&cursor=ID_of_last_item_from_first_page</a>
+                <!-- ./api/art_depositos_cursor?limit=100&cursor=ID_of_last_item_from_first_page -->
+              
+              <p>-</p>
+            </p>
+            <p>
+              <a href="tbl_talles" target="_blank">tbl_talle</a>.tbl_talle
+            </p>
+            <p>
+              <a href="tbl_talless" target="_blank">tbl_talles</a>.tbl_talles
+            </p>
+            <p>
+              <a href="art_rubros" target="_blank">art_rubro</a>.art_rubro
             </p>
             <p>
               <a href="art_subrubros" target="_blank">art_subrubro</a
@@ -76,10 +106,16 @@
               <a href="presup_todos" target="_blank">presup_todos</a
               >.presup_todos
             </p>
+            <h5 style="color:blue">------------------------------------------------------------------------</h5>
             <p>
               <a href="tbl_clientes" target="_blank">tbl_clientes</a
               >.tbl_clientes
             </p>
+            <p>
+              <a href="tbl_clientesPaginate" target="_blank">tbl_clientesPaginate</a
+              >.tbl_clientes
+            </p>
+            <h5 style="color:blue">------------------------------------------------------------------------</h5>            
             <p>
               <a href="tbl_lista_precios" target="_blank">tbl_lista_precios</a
               >.tbl_lista_precios
@@ -100,13 +136,16 @@
               >.art_descuentos
             </p>
             <p>
-              <a href="art_descuentos_cants" target="_blank"
-                >art_descuentos_cant</a
-              >.art_descuentos_cant
+              <a href="art_descuentos_cants" target="_blank">art_descuentos_cant</a>.art_descuentos_cant
+            </p>
+            <h5 style="color:red">------------------------------------------------------------------------</h5>
+            <p>
+              <a href="art_imagens" target="_blank">art_imagens</a>.art_imagens
             </p>
             <p>
-              <a href="art_imagens" target="_blank">art_imagen</a>.art_imagen
+              <a href="art_imagenspaginate" target="_blank">art_imagenPaginate</a>.art_imagenPaginate
             </p>
+            <h5 style="color:red">------------------------------------------------------------------------</h5>
             <p><a href="combo_arts" target="_blank">combo_art</a>.combo_art</p>
             <p>
               <a href="art_detalles" target="_blank">art_detalle</a>.art_detalle
@@ -130,7 +169,9 @@
         <div class="text-center">
           <p>
             Kenay.SA - El Galpón Corrientes
-            <!-- <a href="/api/logout" style="color:red">LOG-OUT</a>. -->
+            </p>
+            <p></p>
+            <a href="/api/REGISTER" style="color:red">REGISTER NEW USER</a>.
           </p>
           <p>
             Visit the
