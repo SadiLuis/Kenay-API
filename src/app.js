@@ -1,4 +1,6 @@
 import express from 'express';
+import compression from 'compression'; // npm i compression
+
 import mos_vendedoRoutes from './routes/mos_vendedor.routes.js';
 import indexRoutes from './routes/index.routes.js';
 import tbl_clientesRoutes from './routes/tbl_clientes.routes.js';
@@ -62,7 +64,10 @@ app.use('/api',  art_talle_medida);
 app.use('/api',  pedido_todos);
 app.use('/api',  art_descuentos);
 app.use('/api',  art_descuentos_cant);
+// sadi 
 app.use('/api',  art_imagen);
+app.use(compression({ level: 6 }));    // comprime JSON (las imágenes ya están comprimidas)
+// FIN SADI
 app.use('/api',  combo_art);
 app.use('/api',  art_detalle);
 app.use('/api',  ala_usuarios);
