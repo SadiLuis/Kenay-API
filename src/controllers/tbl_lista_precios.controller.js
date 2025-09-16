@@ -8,7 +8,7 @@ export const getTbl_lista_precios = async (req, res) => {
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token')
     } else {
-      const [rows] = await pool.query('SELECT * FROM kenay_sa.Tbl_lista_precios');
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.Tbl_lista_precios WHERE Codigo_list != 0');      
       res.json(rows);
     }
   } catch (err) {

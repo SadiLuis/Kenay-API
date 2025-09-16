@@ -41,7 +41,7 @@ export const getTbl_clientesPaginate = async (req, res) => {
 
     // 1. Obtener los parámetros de paginación de la URL
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = parseInt(req.query.limit) || 50;
     const offset = (page - 1) * limit;
 
     // 2. Consulta para obtener el número total de clientes

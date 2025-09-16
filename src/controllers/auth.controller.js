@@ -71,9 +71,7 @@ export const createBack_user = async (req, res) => {
             }
         }
     } catch (err) {
-
         // console.log("Error creando Back_user", { user, name, pass });
-
         res.status(401).send('REGISTRO CANCELADO - Acceso no Autorizado sin Token o permisos')
         // res.render('index')
         // res.status(500).send('Error creating Back_user');
@@ -82,36 +80,120 @@ export const createBack_user = async (req, res) => {
 };
 
 //metodo para loguear usuarios y debe ser un post
+// export const loginback_user = async (req, res) => {
+//     try {
+//         const user = req.body.user;
+//         const pass = req.body.pass;
+//         const horaActual = new Date();
+
+//         // 1. Obtener la IP del cliente de forma segura
+//         const clientIp = req.headers['x-forwarded-for'] || req.ip;        
+//         // 2. Obtener el país de origen de la IP
+//         let country = 'Desconocido';
+//         try {
+//             const geo = geoip.lookup(clientIp);
+//             if (geo && geo.country) {
+//                 country = geo.country;
+//             }
+//         } catch (geoError) {
+//             console.error('Error al obtener la geolocalización:', geoError);
+//         }
+
+//         if (!user || !pass) {
+//             return res.status(400).json({ message: "Username and password are required" });
+//         } else {
+//             const [result] = await pool.query('SELECT * FROM kenay_sa.back_user WHERE back_user = ?', user);
+//             //console.log("RESULT",result)
+//             if (result <= 0 || result == []) {
+//                 res.redirect('/api/login')
+//                 console.log('contraseña incorrecta o usuario, ', `hora actual: ${horaActual.toLocaleTimeString()}`)
+//             } else {
+//                 if ((await bcrypt.compare(pass, result[0].back_userpass))) {
+//                     // ... después de verificar la contraseña
+//                     const payload = { user };
+//                     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
+//                     res.cookie('user_data', JSON.stringify({ user, token }), { httpOnly: true, maxAge: 3600000 });
+//                     const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+//                     // 1. Obtener la IP del cliente de forma segura                    
+//                     console.log(`Solicitud de acceso desde la IP: ${clientIp}`);
+//                     //Hora y estado ok del login
+//                     console.log('Login Correcto!!!')   
+//                     // 3. Loguear la IP y el país de acceso
+//                     console.log(`País: ${country}, hora actual: ${horaActual.toLocaleTimeString()}`);                 
+//                     res.json(cookieData);
+//                 } else {
+//                     console.log("Datos incorrectos Usuario/Contraseña:", `hora actual: ${horaActual.toLocaleTimeString()}`)
+//                     res.redirect("/login")
+//                 }
+//             }
+//         };
+//     } catch (err) {
+//         res.status(500).json({ message: "An internal server error occurred." });
+//     }
+// };
 export const loginback_user = async (req, res) => {
     try {
         const user = req.body.user;
         const pass = req.body.pass;
+        const horaActual = new Date();
+        
+        // 1. Obtener la IP del cliente de forma segura
+        const clientIp = req.headers['x-forwarded-for'] || req.ip;
+
+        // 2. Realizar la llamada a la API de Abstract API de forma asíncrona
+        let country = 'Desconocido';
+        let city = 'Desconocido';        
+        try {
+            //const clientIpdev = process.env.CLIENTIPDEV;
+            const clientIpdev = clientIp
+            const abstractApiToken = process.env.ABSTRACT_API_TOKEN;
+            if (abstractApiToken) {
+                //const response = await fetch(`https://ipgeolocation.abstractapi.com/v1/?api_key=${abstractApiToken}&ip_address=181.126.119.210`);
+                const response = await fetch(`https://ipgeolocation.abstractapi.com/v1/?api_key=${abstractApiToken}&ip_address=${clientIpdev}`);
+                if (response.ok) {
+                    const geoInfo = await response.json();
+                    country = geoInfo.country || country;
+                    city = geoInfo.city || city;
+                }
+            } else {
+                console.log('ADVERTENCIA: No se ha configurado el token de Abstract API en las variables de entorno.');
+            }
+        } catch (apiError) {
+            console.error("Error al consultar la API de Abstract API:", apiError.message);
+        }
+        
         if (!user || !pass) {
             return res.status(400).json({ message: "Username and password are required" });
         } else {
             const [result] = await pool.query('SELECT * FROM kenay_sa.back_user WHERE back_user = ?', user);
-            //console.log("RESULT",result)
-            if (result <= 0 || result == []) {
-                res.redirect('/api/login')
-                console.log('contraseña incorrecta o usuario', result)
+            
+            if (result.length === 0) {
+                res.redirect('/api/login');
+                console.log('Contraseña o usuario incorrecto', `hora actual: ${horaActual.toLocaleTimeString()}`);
             } else {
                 if ((await bcrypt.compare(pass, result[0].back_userpass))) {
-                    // ... después de verificar la contraseña
                     const payload = { user };
                     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION });
                     res.cookie('user_data', JSON.stringify({ user, token }), { httpOnly: true, maxAge: 3600000 });
                     const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+
+                    // Loguear la IP, el país y la ciudad de acceso
+                    console.log("Usuario ID:", result[0].idback_user);
+                    console.log(`Login Correcto - IP: ${clientIp}, País: ${country}, Ciudad: ${city}, hora actual: ${horaActual.toLocaleTimeString()}`);
+                    
                     res.json(cookieData);
                 } else {
-                    console.log("Datos incorrectos Usuario o Contraseña")
-                    res.redirect("/login")
+                    console.log("Datos incorrectos Usuario/Contraseña:", `hora actual: ${horaActual.toLocaleTimeString()}`);
+                    res.redirect("/login");
                 }
             }
-        };
+        }
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "An internal server error occurred." });
     }
 };
+
 
 // Middleware
 export const authenticateToken = async (req, res, next) => {
@@ -142,7 +224,6 @@ export const deleteBack_user = async (req, res) => {
             res.json({ message: 'Back_user deleted successfully: ' + req.params.id });
         }
     } catch (err) {
-
         res.status(500).send('Error deleting Back_user');
     }
 };

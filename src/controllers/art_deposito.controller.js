@@ -1,20 +1,14 @@
-import { pool } from '../db.js'; // Assuming you have a db.js file that exports a configured MySQL pool
+import { pool } from '../db.js'; 
 
 
 export const getArt_depositos = async (req, res) => {
-  try {
-    //throw new Error("My error"); //error para pruebas
-    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
-    // 2. Renderiza la vista 'profile' y pasa los datos de la cookie    
-    // console.log("cookiedata de art_deposito", cookieData)
+  try {    
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;    
     const token = cookieData.token;
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token')
-    } else {
-      //const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito WHERE Descripcion_art NOT LIKE "%BAJA%" limit 500');
+    } else {      
       const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito WHERE Rubro_dep != 0 AND Descripcion_art != "%BAJA%" AND Baja_art != 1 AND TieneImagen != "No" AND Marca_Baja !=	"SI" ORDER BY Codigo_art ASC limit 500');
-      //SELECT * FROM kenay_sa.art_deposito where Descripcion_art LIKE '%baja%' limit 20; //FILTRA POR LOS Q EN DESCRIPCION DICE BAJA EN ALGUN LADO
-      //const [rows] = await pool.query('SELECT * FROM kenay_sa.art_deposito limit 500');
       res.json(rows);
     }
   } catch (err) {
@@ -125,21 +119,14 @@ export const getArt_depositostalles = async (req, res) => {
           Precio_Lista5: item.Precio_Lista5,
           Precio_Lista6: item.Precio_Lista6,
           Iva_art: item.Iva_art,
-        };
-        // Agregamos el objeto del talle al array de talles
+        };        
         // Verificamos si el talle ya existe para evitar duplicados en el array
         if (!groupedArticles[codigoBase].talles.some(t => t.talle === talle)) {
           groupedArticles[codigoBase].talles.push(talleData);
         }
-        // Agregamos el talle al array de talles del código base
-        // Verificamos si el talle ya existe para evitar duplicados en el array
-        // if (!groupedArticles[codigoBase].talles.includes(talle)) {
-        //   groupedArticles[codigoBase].talles.push(talle);
-        // }
       });
       // Convertimos el objeto agrupado en un array de objetos para la respuesta JSON
       const result = Object.values(groupedArticles);
-      // 3. Devolvemos el JSON con los artículos agrupados
       res.json(result);
     }
   } catch (err) {
@@ -153,17 +140,14 @@ export const getArt_depositostallespaginate = async (req, res) => {
     const token = cookieData ? cookieData.token : null;
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token');
-    }
-    // --- 1. Obtener parámetros de paginación de la URL
+    }    
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
-    const offset = (page - 1) * limit;
-    // --- 2. Consulta para obtener el número total de artículos
+    const offset = (page - 1) * limit;    
     const countQuery = 'SELECT COUNT(*) AS total FROM kenay_sa.art_deposito WHERE Rubro_dep != 0 AND Descripcion_art != "%BAJA%" AND Baja_art != 1 AND TieneImagen != "No" AND Marca_Baja != "SI"';
     const [totalRows] = await pool.query(countQuery);
     const totalItems = totalRows[0].total;
     const totalPages = Math.ceil(totalItems / limit);
-    // --- 3. Consulta para obtener solo los artículos de la página actual
     const dataQuery = `
       SELECT * FROM kenay_sa.art_deposito 
       WHERE Rubro_dep != 0 AND Descripcion_art != "%BAJA%" AND Baja_art != 1 AND TieneImagen != "No" AND Marca_Baja != "SI" AND Marca_Baja != "SI" 
@@ -173,7 +157,6 @@ export const getArt_depositostallespaginate = async (req, res) => {
     `;
     const [rows] = await pool.query(dataQuery, [limit, offset]);
 
-    // --- 4. Agrupar los artículos de la página actual
     const groupedArticles = {};
     rows.forEach(item => {
       const talleMatch = item.Codigo_art.match(/\.([0-9]+)$/);
@@ -419,7 +402,6 @@ export const getArt_depositos_cursor = async (req, res) => {
       query += ` AND Codigo_art > ?`; // Assuming 'ID' is your unique indexed column
       queryParams.push(lastId);
     }
-
     // Add ORDER BY and LIMIT
     query += ` ORDER BY Codigo_art ASC LIMIT ?`;
     queryParams.push(limit);
@@ -432,13 +414,10 @@ export const getArt_depositos_cursor = async (req, res) => {
       nextCursor: nextCursor,
       hasMore: rows.length === limit,
     });
-
   } catch (err) {
     res.status(500).send('Error interno del servidor. No se pudieron obtener los datos.');
   }
 };
-
-
 
 export const getArt_deposito = async (req, res) => {
   try {
