@@ -2,7 +2,7 @@ import {Router} from "express";
 
 const router = Router();
 
-import { getArt_detalles, getArt_detalle, createArt_detalle, updateArt_detalle, deleteArt_detalle   } from "../controllers/art_detalle.controller.js";
+import { getArt_detalles, getArt_detallesPaginate, getArt_detalle, createArt_detalle, updateArt_detalle, deleteArt_detalle   } from "../controllers/art_detalle.controller.js";
 
 
 router.get('/', (req, res) => {
@@ -11,6 +11,8 @@ router.get('/', (req, res) => {
 
 
 router.get('/Art_detalles', getArt_detalles);
+
+router.get('/Art_detallesPaginate', getArt_detallesPaginate);
 
 router.get('/Art_detalle/:id', getArt_detalle)
 
