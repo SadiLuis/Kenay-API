@@ -439,8 +439,11 @@ export const getImagenesArticulo = async (req, res) => {  
 
         const mapping = [
             { indicator: articuloData.TieneImg1, urlPrefix: '/imagenes/2/', tipo: 'principal' },
+            { indicator: articuloData.TieneImg1, urlPrefix: '/imagenes/2/Thumb/', tipo: 'principalThumb' },
             { indicator: articuloData.TieneImg2, urlPrefix: '/imagenes/3/', tipo: 'secundaria-1' },
+            { indicator: articuloData.TieneImg2, urlPrefix: '/imagenes/3/Thumb/', tipo: 'secundaria-1Thumb' },
             { indicator: articuloData.TieneImg3, urlPrefix: '/imagenes/4/', tipo: 'secundaria-2' },
+            { indicator: articuloData.TieneImg3, urlPrefix: '/imagenes/4/Thumb/', tipo: 'secundaria-2Thumb' },
             // Puedes añadir más si tienes TieneImg4, etc.
             //{ indicator: articuloData.TieneImg4, urlPrefix: '/imagenes/5/', tipo: 'extra' }
         ];
@@ -459,7 +462,7 @@ export const getImagenesArticulo = async (req, res) => {  
         }
         
         res.json({
-            art_imagen_id: artImagenId,
+            codigo_art: artImagenId,
             imagenes: imagenesUrls
         });
 
