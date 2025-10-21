@@ -402,3 +402,69 @@ export const updateArt_imagen = async (req, res) => {
     res.status(500).send("Error updating Art_imagen");
   }
 };
+
+// Asegúrate de que tu 'pool' de MySQL esté configurado e importado
+// const pool = require('../config/db'); 
+
+export const getImagenesArticulo = async (req, res) => {   
+    const rawArtImagenId = req.params.id;    
+
+    if (!rawArtImagenId) {
+        return res.status(400).json({ message: 'Error: Falta el parámetro de artículo (Codigo_art) en la URL.' });
+    }
+
+    const lastDotIndex = rawArtImagenId.lastIndexOf('.');
+    const artImagenId = (lastDotIndex !== -1) ? rawArtImagenId.substring(0, lastDotIndex) : rawArtImagenId;
+    
+    const serverBaseUrl = req.protocol + '://' + req.get('host');
+    const imagenesUrls = []; 
+
+    try {
+        const [rows] = await pool.query(
+            `
+            SELECT Codigo_art, TieneImg1, TieneImg2, TieneImg3, TieneImg4
+            FROM kenay_sa.Art_imagen
+            WHERE Codigo_art = ?
+            `,
+            [artImagenId]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron registros de imágenes para el artículo.' });
+        }
+        
+        const articuloData = rows[0]; 
+        
+        const nombreArchivo = `${articuloData.Codigo_art}.jpg`; 
+
+        const mapping = [
+            { indicator: articuloData.TieneImg1, urlPrefix: '/imagenes/2/', tipo: 'principal' },
+            { indicator: articuloData.TieneImg2, urlPrefix: '/imagenes/3/', tipo: 'secundaria-1' },
+            { indicator: articuloData.TieneImg3, urlPrefix: '/imagenes/4/', tipo: 'secundaria-2' },
+            // Puedes añadir más si tienes TieneImg4, etc.
+            { indicator: articuloData.TieneImg4, urlPrefix: '/imagenes/5/', tipo: 'extra' }
+        ];
+
+        mapping.forEach(item => {
+            if (item.indicator == 1) { 
+                imagenesUrls.push({
+                    tipo: item.tipo,
+                    url: `${serverBaseUrl}${item.urlPrefix}${nombreArchivo}`
+                });
+            }
+        });
+        
+        if (imagenesUrls.length === 0) {
+            return res.status(404).json({ message: 'El artículo existe pero no tiene ninguna imagen asociada marcada como True.' });
+        }
+        
+        res.json({
+            art_imagen_id: artImagenId,
+            imagenes: imagenesUrls
+        });
+
+    } catch (error) {
+        console.error('Error al obtener imágenes del artículo:', error);
+        res.status(500).json({ message: 'Error interno del servidor al procesar la solicitud.' });
+    }
+};

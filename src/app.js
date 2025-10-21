@@ -1,5 +1,6 @@
 import express from 'express';
 import compression from 'compression'; // npm i compression
+import path from 'path'; 
 
 import mos_vendedoRoutes from './routes/mos_vendedor.routes.js';
 import indexRoutes from './routes/index.routes.js';
@@ -84,6 +85,18 @@ app.use('/api',  auth_Routes);
 app.use('/api/', caja_med_pago);
 app.use('/api',  tbl_talle);
 app.use('/api',  tbl_talles);
+
+//para imagenes
+const RUTA_CARPETA_2 = 'E:/Back.End.Sistemas/GestionAR/Imagenes/2'; // Nota: Usé '2' en lugar de '\x02'
+const RUTA_CARPETA_3 = 'E:/Back.End.Sistemas/GestionAR/Imagenes/3'; // Nota: Usé '3' en lugar de '\x03'
+const RUTA_CARPETA_4 = 'E:/Back.End.Sistemas/GestionAR/Imagenes/4'; // Nota: Usé '4' en lugar de '\x04'
+
+// 1. Configura la ruta URL '/imagenes/c2' para que sirva los archivos de RUTA_CARPETA_2
+app.use('/imagenes/2', express.static(path.resolve(RUTA_CARPETA_2)));
+// 2. Configura la ruta URL '/imagenes/c3' para que sirva los archivos de RUTA_CARPETA_3
+app.use('/imagenes/3', express.static(path.resolve(RUTA_CARPETA_3)));
+// 3. Configura la ruta URL '/imagenes/c4' para que sirva los archivos de RUTA_CARPETA_4
+app.use('/imagenes/4', express.static(path.resolve(RUTA_CARPETA_4)));
 
 app.use((req, res, next) => {
   res.status(404).send('<h3 style="color: black;text-align:center;">EndPoint Not Found / Ruta no Encontrada</h3>');  
