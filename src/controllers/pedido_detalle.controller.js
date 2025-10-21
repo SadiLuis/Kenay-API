@@ -8,11 +8,52 @@ export const getpedido_detalles = async (req, res) => {
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token')
     } else {
-      const [rows] = await pool.query('SELECT * FROM kenay_sa.pedido_detalle limit 500');
+      const [rows] = await pool.query('SELECT * FROM kenay_sa.pedido_detalle');
       res.json(rows);
     }
   } catch (err) {
     res.status(401).send('Index.ejs - acceso no Autorizado sin Token')
+  }
+};
+
+export const getpedido_detallespaginate = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 500; 
+
+  // Calcular el OFFSET
+  const offset = (page - 1) * limit;
+
+  try {
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData ? cookieData.token : null;
+
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token');
+    } else {      
+      const [rows] = await pool.query(
+        'SELECT * FROM kenay_sa.pedido_detalle LIMIT ? OFFSET ?',
+        [limit, offset]
+      );
+      const [[totalResult]] = await pool.query(
+        'SELECT COUNT(*) as totalCount FROM kenay_sa.pedido_detalle'
+      );
+      const totalCount = totalResult.totalCount;
+      const totalPages = Math.ceil(totalCount / limit);
+      res.json({
+        data: rows,
+        pagination: {
+          totalItems: totalCount,
+          totalPages: totalPages,
+          currentPage: page,
+          itemsPerPage: limit,
+          nextPage: page < totalPages ? page + 1 : null,
+          prevPage: page > 1 ? page - 1 : null,
+        }
+      });
+    }
+  } catch (err) {
+    console.error('Error en getpedido_detalles:', err);
+    res.status(500).send('Error del servidor al obtener los detalles del pedido.'); 
   }
 };
 

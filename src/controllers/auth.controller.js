@@ -183,8 +183,9 @@ export const loginback_user = async (req, res) => {
                     
                     res.json(cookieData);
                 } else {
-                    console.log("Datos incorrectos Usuario/Contraseña:", `hora actual: ${horaActual.toLocaleTimeString()}`);
-                    res.redirect("/login");
+                    //console.log("Datos incorrectos Usuario/Contraseña:", `hora actual: ${horaActual.toLocaleTimeString()}`);
+                    //res.redirect("/login");
+                    res.status(403).send('Acceso no Autorizado, no llega token')
                 }
             }
         }

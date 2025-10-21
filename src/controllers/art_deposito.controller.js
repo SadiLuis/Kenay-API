@@ -134,6 +134,177 @@ export const getArt_depositostalles = async (req, res) => {
   }
 };
 
+export const getArt_depositostallescursor = async (req, res) => {
+  try {
+    // 1. Autenticación y obtención de parámetros
+    const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+    const token = cookieData ? cookieData.token : null;
+    
+    if (!token) {
+      return res.status(403).send('Acceso no Autorizado, no llega token');
+    }
+
+    // Parámetros de paginación por cursor
+    const limit = parseInt(req.query.limit) || 5000; // Límite por defecto, se puede ajustar
+    // 'cursor' es el Codigo_art del último elemento de la página anterior
+    const cursor = req.query.cursor || null;
+
+    // 2. Definición de la consulta SQL
+    
+    // Condición del cursor: 'AND Codigo_art > ?' si hay cursor, de lo contrario vacío
+    const cursorCondition = cursor ? 'AND Codigo_art > ?' : '';
+    const cursorParams = cursor ? [cursor] : [];
+    
+    // NOTA: Se usa NOT LIKE para "%BAJA%"
+    const dataQuery = `
+      SELECT * FROM kenay_sa.art_deposito 
+      WHERE 
+        Rubro_dep != 0 
+        AND Descripcion_art NOT LIKE "%BAJA%" 
+        AND Baja_art != 1 
+        AND TieneImagen != "No" 
+        AND Marca_Baja != "SI"
+        ${cursorCondition}
+      ORDER BY FechaMod_dep ASC
+    `;
+
+    // Parámetros: [cursor, limit] o simplemente [limit]
+    const queryParams = [...cursorParams, limit];
+    
+    const [rows] = await pool.query(dataQuery, queryParams);
+
+    // 3. Agrupación de artículos por código base (sin talle) y determinación del cursor
+    const groupedArticles = {};
+    let lastCodigoArt = null;
+
+    rows.forEach(item => {
+      // Guardar el Codigo_art del último elemento procesado
+      lastCodigoArt = item.Codigo_art;
+      
+      const talleMatch = item.Codigo_art.match(/\.([0-9]+)$/);
+      const codigoBase = talleMatch
+        ? item.Codigo_art.substring(0, talleMatch.index)
+        : item.Codigo_art;
+      const talle = talleMatch ? talleMatch[1] : 'N/A';
+      const descripcionLimpia = item.Descripcion_art.replace(/\s*(\.|-)\s*[0-9]+$/, '');
+
+      if (!groupedArticles[codigoBase]) {
+        groupedArticles[codigoBase] = {
+          // Propiedades del artículo base
+          Codigo_art: codigoBase,
+          descripcion: descripcionLimpia,
+          talles: [],
+          Codigo_Sintalle: item.Codigo_Sintalle,
+          FechaIn_dep: item.FechaIn_dep,
+          FechaMod_dep: item.FechaMod_dep,
+          Rubro_dep: item.Rubro_dep,
+          Subrubro_dep: item.Subrubro_dep,
+          Temporada_dep: item.Temporada_dep,
+          TieneImagen: item.TieneImagen,
+          Ultima_Compra: item.Ultima_Compra,     
+          Notas_dep: item.Notas_dep,
+          Marca_Art: item.Marca_Art,
+          Cantidad_min: item.Cantidad_min,
+          Codigo_prov: item.Codigo_prov,
+          Inventariado_art: item.Inventariado_art,
+          Fecha_inventario: item.Fecha_inventario,          
+          Gan_Lista4: item.Gan_Lista4,
+          Gan_Lista3: item.Gan_Lista3,
+          Gan_Lista1: item.Gan_Lista1,
+          Gan_Lista2: item.Gan_Lista2,
+          Gan_Lista5: item.Gan_Lista5,
+          Gan_Lista6: item.Gan_Lista6,
+          Impuesto_1: item.Impuesto_1,
+          Descripcion_corta: item.Descripcion_corta,
+          Baja_art: item.Baja_art,          
+          Segunda_unidad: item.Segunda_unidad,
+          BotonPrioridad_art: item.BotonPrioridad_art,
+          MaterialTipo_art: item.MaterialTipo_art,
+          Pagina_art: item.Pagina_art,
+          Unidad_compra: item.Unidad_compra,
+          Marca_Baja: item.Marca_Baja,
+          Desc_auto: item.Desc_auto,
+          EnOferta_art: item.EnOferta_art,
+          NoVender_art: item.NoVender_art,
+          AuxiliarFijo_art: item.AuxiliarFijo_art,
+          Publicar_Web: item.Publicar_Web,          
+          ConceptoFE_art: item.ConceptoFE_art,
+          Vencimdias_art: item.Vencimdias_art,
+          Publicar_WebConST: item.Publicar_WebConST,
+          Publicar_WebSTMin: item.Publicar_WebSTMin,
+          Imagen1_art: item.Imagen1_art,
+          Imagen2_art: item.Imagen2_art,
+          Imagen3_art: item.Imagen3_art,
+          Imagen4_art: item.Imagen4_art,
+          Talle_dep: item.Talle_dep,
+          Perfil_impuestos: item.Perfil_impuestos,
+          CantidadPack_art: item.CantidadPack_art,
+          Tamano_art1: item.Tamano_art1,
+          Tamano_art2: item.Tamano_art2,
+          Tamano_art3: item.Tamano_art3,
+          Tamano_art4: item.Tamano_art4,
+          ModoPrecio_art: item.ModoPrecio_art,
+          Pesable_art: item.Pesable_art,
+          PideObserva_art: item.PideObserva_art,
+          NoReporte_art: item.NoReporte_art,
+          UserMod_art: item.UserMod_art,
+          ModOrigen_art: item.ModOrigen_art,
+          ID_Art: item.ID_Art,
+          LastUpdate_art: item.LastUpdate_art
+        };
+      }
+      
+      // Datos específicos del talle
+      const talleData = {
+        talle: talle,
+        Cantidad_dep: item.Cantidad_dep,
+        Precio_Costo: item.Precio_Costo,
+        Precio_CostoUSD: item.Precio_CostoUSD,
+        Costo_ante: item.Costo_ante,
+        Precio_Lista1: item.Precio_Lista1,
+        Precio_Lista2: item.Precio_Lista2,
+        Precio_Lista3: item.Precio_Lista3,
+        Precio_Lista4: item.Precio_Lista4,
+        Precio_Lista5: item.Precio_Lista5,
+        Precio_Lista6: item.Precio_Lista6,
+        Iva_art: item.Iva_art,
+        Desc_financiero: item.Desc_financiero,
+        TipoImpuesto_art: item.TipoImpuesto_art,
+        Impuestos_art: item.Impuestos_art,
+        Compras_total: item.Compras_total,        
+        Bonifica_dep: item.Bonifica_dep,
+        PrecioManual_art: item.PrecioManual_art,
+        PrecioNoVence_art: item.PrecioNoVence_art,        
+      };
+      
+      if (!groupedArticles[codigoBase].talles.some(t => t.talle === talle)) {
+        groupedArticles[codigoBase].talles.push(talleData);
+      }
+    });
+
+    const paginatedArticles = Object.values(groupedArticles);
+    
+    // 4. Determinar si hay más páginas y cuál es el nuevo cursor
+    // Si se devolvieron exactamente 'limit' filas, asumimos que puede haber una página siguiente.
+    const hasNextPage = rows.length === limit;
+    // El cursor para la siguiente solicitud será el código del último artículo procesado.
+    const nextCursor = hasNextPage ? lastCodigoArt : null;
+
+    // 5. Enviar respuesta con metadatos de paginación por cursor
+    res.json({
+      itemsPerPage: limit,
+      nextCursor: nextCursor, // Cursor a usar en la próxima solicitud (req.query.cursor)
+      hasNextPage: hasNextPage,
+      data: paginatedArticles,
+    });
+    
+  } catch (err) {
+    console.error('Error al procesar la solicitud:', err);
+    res.status(401).send('art_deposito - acceso no Autorizado sin Token');
+  }
+};
+
+
 export const getArt_depositostallespaginate = async (req, res) => {
   try {
     const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
@@ -271,46 +442,130 @@ export const getArt_depositostallespaginate = async (req, res) => {
 
 export const getArt_depositostallespaginatecursor = async (req, res) => {
   try {
+    // 1. Autenticación y preparación de datos
     const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
     const token = cookieData ? cookieData.token : null;
     if (!token) {
       return res.status(403).send('Acceso no Autorizado, no llega token');
     }
-    // --- 1. Obtener parámetros de paginación por cursor
-    const limit = parseInt(req.query.limit) || 20;
-    const lastId = req.query.cursor || null;
 
-    // --- 2. Modificar la consulta para usar el cursor
-    let dataQuery = `
+    // Parámetros de paginación por cursor
+    const limit = parseInt(req.query.limit) || 20;
+    // 'cursor' es el Codigo_art del último elemento de la página anterior
+    const cursor = req.query.cursor || null;
+
+    // 2. Definición de la cláusula WHERE para el cursor
+    // Si hay un cursor, lo usamos para empezar a buscar DESPUÉS de ese código
+    const cursorCondition = cursor ? 'AND Codigo_art > ?' : '';
+    const cursorParams = cursor ? [cursor] : [];
+    
+    // El límite se aplica a los artículos individuales, no a los grupos
+    const dataQuery = `
       SELECT * FROM kenay_sa.art_deposito 
-      WHERE Rubro_dep != 0 AND Descripcion_art != "%BAJA%" AND Baja_art != 1 AND TieneImagen != "No" AND Marca_Baja != "SI"
+      WHERE 
+        Rubro_dep != 0 
+        AND Descripcion_art NOT LIKE "%BAJA%" 
+        AND Baja_art != 1 
+        AND TieneImagen != "No" 
+        AND Marca_Baja != "SI"
+        ${cursorCondition}
+      ORDER BY Codigo_art ASC
+      LIMIT ?
     `;
-    const queryParams = [];
-    // Si se proporciona un cursor, agregar la condición
-    if (lastId) {
-      dataQuery += ` AND Codigo_art > ?`;
-      queryParams.push(lastId);
-    }
-    // El orden y el límite son cruciales para la paginación por cursor
-    dataQuery += ` ORDER BY Codigo_art ASC LIMIT ?`;
-    queryParams.push(limit);
+
+    // Parámetros para la consulta: [cursor, limit] o [limit]
+    const queryParams = [...cursorParams, limit];
+    
     const [rows] = await pool.query(dataQuery, queryParams);
-    // --- 3. Procesar y agrupar los artículos
+
+    // 3. Agrupación de artículos por código base (sin talle) - Lógica idéntica a tu función original
     const groupedArticles = {};
+    let lastCodigoArt = null;
+
     rows.forEach(item => {
+      // Guardar el Codigo_art del último elemento
+      lastCodigoArt = item.Codigo_art;
+      
       const talleMatch = item.Codigo_art.match(/\.([0-9]+)$/);
-      const codigoBase = talleMatch ? item.Codigo_art.substring(0, talleMatch.index) : item.Codigo_art;
+      const codigoBase = talleMatch
+        ? item.Codigo_art.substring(0, talleMatch.index)
+        : item.Codigo_art;
       const talle = talleMatch ? talleMatch[1] : 'N/A';
       const descripcionLimpia = item.Descripcion_art.replace(/\s*(\.|-)\s*[0-9]+$/, '');
 
       if (!groupedArticles[codigoBase]) {
         groupedArticles[codigoBase] = {
+          // ... (Resto de las propiedades del artículo base) ...
           Codigo_art: codigoBase,
           descripcion: descripcionLimpia,
           talles: [],
-          ...item
+          Codigo_Sintalle: item.Codigo_Sintalle,
+          FechaIn_dep: item.FechaIn_dep,
+          FechaMod_dep: item.FechaMod_dep,
+          Rubro_dep: item.Rubro_dep,
+          Subrubro_dep: item.Subrubro_dep,
+          Temporada_dep: item.Temporada_dep,
+          TieneImagen: item.TieneImagen,
+          Ultima_Compra: item.Ultima_Compra,
+          Compras_total: item.Compras_total,
+          Bonifica_dep: item.Bonifica_dep,
+          Notas_dep: item.Notas_dep,
+          Marca_Art: item.Marca_Art,
+          Cantidad_min: item.Cantidad_min,
+          Codigo_prov: item.Codigo_prov,
+          Inventariado_art: item.Inventariado_art,
+          Fecha_inventario: item.Fecha_inventario,
+          PrecioManual_art: item.PrecioManual_art,
+          PrecioNoVence_art: item.PrecioNoVence_art,
+          Gan_Lista4: item.Gan_Lista4,
+          Gan_Lista3: item.Gan_Lista3,
+          Gan_Lista1: item.Gan_Lista1,
+          Gan_Lista2: item.Gan_Lista2,
+          Gan_Lista5: item.Gan_Lista5,
+          Gan_Lista6: item.Gan_Lista6,
+          Impuesto_1: item.Impuesto_1,
+          Descripcion_corta: item.Descripcion_corta,
+          Baja_art: item.Baja_art,
+          TipoImpuesto_art: item.TipoImpuesto_art,
+          Impuestos_art: item.Impuestos_art,
+          Segunda_unidad: item.Segunda_unidad,
+          BotonPrioridad_art: item.BotonPrioridad_art,
+          MaterialTipo_art: item.MaterialTipo_art,
+          Pagina_art: item.Pagina_art,
+          Unidad_compra: item.Unidad_compra,
+          Marca_Baja: item.Marca_Baja,
+          Desc_auto: item.Desc_auto,
+          EnOferta_art: item.EnOferta_art,
+          NoVender_art: item.NoVender_art,
+          AuxiliarFijo_art: item.AuxiliarFijo_art,
+          Publicar_Web: item.Publicar_Web,
+          Desc_financiero: item.Desc_financiero,
+          ConceptoFE_art: item.ConceptoFE_art,
+          Vencimdias_art: item.Vencimdias_art,
+          Publicar_WebConST: item.Publicar_WebConST,
+          Publicar_WebSTMin: item.Publicar_WebSTMin,
+          Imagen1_art: item.Imagen1_art,
+          Imagen2_art: item.Imagen2_art,
+          Imagen3_art: item.Imagen3_art,
+          Imagen4_art: item.Imagen4_art,
+          Talle_dep: item.Talle_dep,
+          Perfil_impuestos: item.Perfil_impuestos,
+          CantidadPack_art: item.CantidadPack_art,
+          Tamano_art1: item.Tamano_art1,
+          Tamano_art2: item.Tamano_art2,
+          Tamano_art3: item.Tamano_art3,
+          Tamano_art4: item.Tamano_art4,
+          ModoPrecio_art: item.ModoPrecio_art,
+          Pesable_art: item.Pesable_art,
+          PideObserva_art: item.PideObserva_art,
+          NoReporte_art: item.NoReporte_art,
+          UserMod_art: item.UserMod_art,
+          ModOrigen_art: item.ModOrigen_art,
+          ID_Art: item.ID_Art,
+          LastUpdate_art: item.LastUpdate_art
         };
       }
+      
       const talleData = {
         talle: talle,
         Cantidad_dep: item.Cantidad_dep,
@@ -325,26 +580,108 @@ export const getArt_depositostallespaginatecursor = async (req, res) => {
         Precio_Lista6: item.Precio_Lista6,
         Iva_art: item.Iva_art,
       };
+      
       if (!groupedArticles[codigoBase].talles.some(t => t.talle === talle)) {
         groupedArticles[codigoBase].talles.push(talleData);
       }
     });
 
     const paginatedArticles = Object.values(groupedArticles);
-    // --- 4. Determinar el próximo cursor y si hay más páginas
-    const nextCursor = rows.length > 0 ? rows[rows.length - 1].Codigo_art : null;
+    
+    // 4. Determinar si hay más páginas y cuál es el nuevo cursor
     const hasNextPage = rows.length === limit;
-    // --- 5. Enviar respuesta con metadatos de paginación
+    const nextCursor = hasNextPage ? lastCodigoArt : null;
+
+    // 5. Enviar respuesta con metadatos de paginación por cursor
     res.json({
+      itemsPerPage: limit,
+      nextCursor: nextCursor, // Este es el cursor que el cliente debe enviar para obtener la siguiente página
+      hasNextPage: hasNextPage,
       data: paginatedArticles,
-      nextCursor: hasNextPage ? nextCursor : null,
-      hasNextPage: hasNextPage
     });
+    
   } catch (err) {
     console.error('Error al procesar la solicitud:', err);
     res.status(401).send('art_deposito - acceso no Autorizado sin Token');
   }
 };
+
+// export const getArt_depositostallespaginatecursor = async (req, res) => {
+//   try {
+//     const cookieData = req.cookies.user_data ? JSON.parse(req.cookies.user_data) : null;
+//     const token = cookieData ? cookieData.token : null;
+//     if (!token) {
+//       return res.status(403).send('Acceso no Autorizado, no llega token');
+//     }
+//     // --- 1. Obtener parámetros de paginación por cursor
+//     const limit = parseInt(req.query.limit) || 20;
+//     const lastId = req.query.cursor || null;
+
+//     // --- 2. Modificar la consulta para usar el cursor
+//     let dataQuery = `
+//       SELECT * FROM kenay_sa.art_deposito 
+//       WHERE Rubro_dep != 0 AND Descripcion_art != "%BAJA%" AND Baja_art != 1 AND TieneImagen != "No" AND Marca_Baja != "SI"
+//     `;
+//     const queryParams = [];
+//     // Si se proporciona un cursor, agregar la condición
+//     if (lastId) {
+//       dataQuery += ` AND Codigo_art > ?`;
+//       queryParams.push(lastId);
+//     }
+//     // El orden y el límite son cruciales para la paginación por cursor
+//     dataQuery += ` ORDER BY Codigo_art ASC LIMIT ?`;
+//     queryParams.push(limit);
+//     const [rows] = await pool.query(dataQuery, queryParams);
+//     // --- 3. Procesar y agrupar los artículos
+//     const groupedArticles = {};
+//     rows.forEach(item => {
+//       const talleMatch = item.Codigo_art.match(/\.([0-9]+)$/);
+//       const codigoBase = talleMatch ? item.Codigo_art.substring(0, talleMatch.index) : item.Codigo_art;
+//       const talle = talleMatch ? talleMatch[1] : 'N/A';
+//       const descripcionLimpia = item.Descripcion_art.replace(/\s*(\.|-)\s*[0-9]+$/, '');
+
+//       if (!groupedArticles[codigoBase]) {
+//         groupedArticles[codigoBase] = {
+//           Codigo_art: codigoBase,
+//           descripcion: descripcionLimpia,
+//           talles: [],
+//           ...item
+//         };
+//       }
+//       const talleData = {
+//         talle: talle,
+//         Cantidad_dep: item.Cantidad_dep,
+//         Precio_Costo: item.Precio_Costo,
+//         Precio_CostoUSD: item.Precio_CostoUSD,
+//         Costo_ante: item.Costo_ante,
+//         Precio_Lista1: item.Precio_Lista1,
+//         Precio_Lista2: item.Precio_Lista2,
+//         Precio_Lista3: item.Precio_Lista3,
+//         Precio_Lista4: item.Precio_Lista4,
+//         Precio_Lista5: item.Precio_Lista5,
+//         Precio_Lista6: item.Precio_Lista6,
+//         Iva_art: item.Iva_art,
+//       };
+//       if (!groupedArticles[codigoBase].talles.some(t => t.talle === talle)) {
+//         groupedArticles[codigoBase].talles.push(talleData);
+//       }
+//     });
+
+//     const paginatedArticles = Object.values(groupedArticles);
+//     // --- 4. Determinar el próximo cursor y si hay más páginas
+//     const nextCursor = rows.length > 0 ? rows[rows.length - 1].Codigo_art : null;
+//     const hasNextPage = rows.length === limit;
+//     // --- 5. Enviar respuesta con metadatos de paginación
+//     res.json({
+//       data: paginatedArticles,
+//       nextCursor: hasNextPage ? nextCursor : null,
+//       hasNextPage: hasNextPage
+//     });
+//   } catch (err) {
+//     console.error('Error al procesar la solicitud:', err);
+//     res.status(401).send('art_deposito - acceso no Autorizado sin Token');
+//   }
+// };
 
 export const getPaginatedAndFilteredData = (tableName, filterClause) => {
   return async (req, res) => {

@@ -2,7 +2,7 @@ import {Router} from "express";
 
 const router = Router();
 
-import { getArt_imagensUnificado, imagenes, imagen, getArt_imagens, getArt_imagenspaginate, getArt_imagenBinary, getArt_imagen, createArt_imagen, updateArt_imagen, deleteArt_imagen   } from "../controllers/art_imagen.controller.js";
+import { getArt_imagensUnificado, getArt_imagensb64paginate, imagenes, imagen, getArt_imagens, getArt_imagenspaginate, getArt_imagenBinary, getArt_imagen, createArt_imagen, updateArt_imagen, deleteArt_imagen   } from "../controllers/art_imagen.controller.js";
 
 router.get('/', (req, res) => {
   res.send('KENAY SA - API REST con MySQL y Node.js - BACKEND - 15-08-25');
@@ -27,6 +27,8 @@ router.get('/art_imagens/:code', getArt_imagenBinary);      // binario con resiz
 router.get('/Art_imagen/:id', getArt_imagen)
 
 router.post('/Art_imagen', createArt_imagen);
+
+router.get('/art_imagensb64Paginate', getArt_imagensb64paginate);
 
 router.put('/Art_imagen/:id', updateArt_imagen);
 

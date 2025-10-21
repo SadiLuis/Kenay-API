@@ -58,6 +58,88 @@ export const getArt_imagens = async (req, res) => {
   }
 };
 
+export const getArt_imagensb64paginate = async (req, res) => {
+  try {
+    const cookieData = req.cookies.user_data
+      ? JSON.parse(req.cookies.user_data)
+      : null;
+    const token = cookieData?.token; // Uso de optional chaining para seguridad
+
+    if (!token) {
+      return res.status(403).send("Acceso no Autorizado, no llega token");
+    }
+
+    // --- Lógica de Paginación ---
+
+    // Obtener 'page' y 'pageSize' de los query parameters, con valores por defecto
+    const page = parseInt(req.query.page) || 1; // Página actual (default 1)
+    const pageSize = parseInt(req.query.pageSize) || 50; // Registros por página (default 50)
+    
+    // Calcular OFFSET
+    const offset = (page - 1) * pageSize;
+    
+    // El límite es el pageSize
+    const limit = pageSize;
+    
+    // Definir el límite máximo para evitar peticiones demasiado grandes
+    const maxLimit = 500;
+    const finalLimit = Math.min(limit, maxLimit); 
+
+    // --- Consultas a la Base de Datos ---
+
+    // 1. Obtener el conteo total de registros
+    const [countRows] = await pool.query(
+      "SELECT COUNT(*) as total_count FROM kenay_sa.Art_imagen"
+    );
+    const totalCount = countRows[0].total_count;
+
+    // 2. Obtener los datos con LIMIT y OFFSET para paginación
+    const [rows] = await pool.query(
+      `SELECT * FROM kenay_sa.Art_imagen 
+       ORDER BY Codigo_art ASC 
+       LIMIT ? OFFSET ?`,
+      [finalLimit, offset] // Pasamos los valores como array para evitar inyección SQL
+    );
+
+    // --- Procesamiento de Imágenes ---
+    
+    const imagesWithBase64 = rows.map((row) => {
+      if (row.imagen) {
+        // Asumiendo que 'row.imagen' es un Buffer de la imagen
+        const base64Image = Buffer.from(row.imagen).toString("base64");
+        return {
+          ...row,
+          // Crea la URL de datos (Data URI)
+          imagenBase64: `data:${row.tipo_imagen};base64,${base64Image}`,
+        };
+      }
+      return row;
+    });
+
+    // --- Respuesta con JSON de Paginación ---
+
+    // Calcular el total de páginas
+    const totalPages = Math.ceil(totalCount / finalLimit);
+
+    // Enviar la respuesta JSON con los datos y la información de paginación
+    res.json({
+      pagination: {
+        totalCount: totalCount,
+        pageSize: finalLimit,
+        currentPage: page,
+        totalPages: totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+      data: imagesWithBase64,
+    });
+
+  } catch (err) {
+    console.error("Error en getArt_imagens:", err);
+    res.status(401).send("Art_imagen - acceso no Autorizado sin Token o error de servidor");
+  }
+};
+
 function getBaseUrl(req) {
   const proto = req.headers["x-forwarded-proto"] || req.protocol;
   const host = req.headers["x-forwarded-host"] || req.get("host");
