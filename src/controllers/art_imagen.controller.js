@@ -442,7 +442,7 @@ export const getImagenesArticulo = async (req, res) => {  
             { indicator: articuloData.TieneImg2, urlPrefix: '/imagenes/3/', tipo: 'secundaria-1' },
             { indicator: articuloData.TieneImg3, urlPrefix: '/imagenes/4/', tipo: 'secundaria-2' },
             // Puedes añadir más si tienes TieneImg4, etc.
-            { indicator: articuloData.TieneImg4, urlPrefix: '/imagenes/5/', tipo: 'extra' }
+            //{ indicator: articuloData.TieneImg4, urlPrefix: '/imagenes/5/', tipo: 'extra' }
         ];
 
         mapping.forEach(item => {
